@@ -20,13 +20,16 @@ The same fallback also protects Supabase auth redirects that land directly on pr
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` if edge functions are served from a custom domain
+- `VITE_APP_BASE_PATH` only when production is served from a custom domain or any non-default Pages path
 
 The GitHub Pages workflow reads the public-safe Supabase values from GitHub repository variables and fails fast if the required values are missing.
-`VITE_APP_BASE_PATH` is not a repository variable in production; the workflow derives it from the repository name so the built asset paths and router basename stay aligned with the Pages project-site URL.
+If `VITE_APP_BASE_PATH` is not provided, the workflow derives it from the repository name so the built asset paths and router basename stay aligned with the default Pages project-site URL.
+For a custom domain mounted at the site root, set `VITE_APP_BASE_PATH=/` in the repository variables.
 
 ## Base Path
 
-The deploy workflow sets `VITE_APP_BASE_PATH` to `/<repo-name>/` so React Router and Vite assets work correctly on GitHub Pages project sites.
+The deploy workflow defaults `VITE_APP_BASE_PATH` to `/<repo-name>/` so React Router and Vite assets work correctly on GitHub Pages project sites.
+Override it with `/` when the site is served from a custom domain root such as `https://training.jeffreyboersma.com`.
 
 ## Supabase redirect URLs
 
@@ -36,6 +39,7 @@ Recommended redirect URLs:
 
 - local development: `http://localhost:5173/app`
 - GitHub Pages project site: `https://<owner>.github.io/<repo-name>/app`
+- custom domain root: `https://<custom-domain>/app`
 
 Because the Pages SPA fallback restores deep links before React initializes, redirecting to `/app` remains safe on GitHub Pages.
 
@@ -43,6 +47,7 @@ Session restoration expectations:
 
 - local development resolves magic links to `http://localhost:5173/app`
 - deployed Pages resolves magic links to `https://<owner>.github.io/<repo-name>/app`
+- custom-domain Pages resolves magic links to `https://<custom-domain>/app`
 - when the callback lands directly on `/app` with an auth fragment, the route remains intact and Supabase session detection runs after the app shell loads
 
 ## Backend integration assumptions
@@ -63,5 +68,5 @@ The frontend now explicitly treats the backend `No active plan assignment found.
 - The Supabase anon key is expected to be public-safe
 - Private plan data must remain in the backend and be fetched only after authentication
 
-If the GitHub Pages site URL changes, update both the repo deployment settings and the allowed Supabase redirect URLs together.
+If the GitHub Pages site URL changes, update the Pages base path, the allowed Supabase redirect URLs, and the backend CORS allowlist together.
 
