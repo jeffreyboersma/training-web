@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Training App</title>
+    <script>
+      (function () {
+        var location = window.location;
+        var segments = location.pathname.split('/').filter(Boolean);
+        var isGithubProjectSite = location.hostname.endsWith('.github.io') && segments.length > 1;
+        var baseSegments = isGithubProjectSite ? 1 : 0;
+        var basePath = '/' + segments.slice(0, baseSegments).join('/');
+        var routePath = '/' + segments.slice(baseSegments).join('/');
+        var normalizedBasePath = basePath === '/' ? '' : basePath;
+        var query = routePath + location.search.replace(/&/g, '~and~') + location.hash;
+
+        location.replace(location.origin + normalizedBasePath + '/?' + query);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

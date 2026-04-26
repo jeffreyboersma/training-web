@@ -30,12 +30,13 @@ The secure frontend will continue to render against that shape as closely as pra
 ## Runtime Data Flow
 
 1. Athlete opens the GitHub Pages app.
-2. The browser initializes the Supabase client using public environment variables.
-3. The athlete signs in with Supabase Auth.
-4. The app obtains an authenticated session and guards protected routes.
-5. The app calls the backend edge function `get-my-plan` with the session access token.
-6. The response is validated with a frontend schema before rendering.
-7. UI components render plan metadata, events, phases, weeks, and sessions without embedding private data in the repo.
+2. If the request is a deep link on GitHub Pages, the static SPA fallback rewrites it back to the correct client route before React boots.
+3. The browser initializes the Supabase client using public environment variables.
+4. The athlete signs in with Supabase Auth.
+5. The app obtains an authenticated session and guards protected routes.
+6. The app calls the backend edge function `get-my-plan` with the session access token.
+7. The response is validated with a frontend schema before rendering.
+8. UI components render plan metadata, overview guidance, calendar weeks, and session details without embedding private data in the repo.
 
 ## Auth Flow
 
@@ -43,6 +44,17 @@ The secure frontend will continue to render against that shape as closely as pra
 - Browser stores only the session managed by Supabase client libraries
 - Unauthenticated users can see only the login screen and public shell
 - Authenticated users can request only their own plan payload
+- Magic-link callbacks return to the static Pages app and preserve route or auth fragment state through the SPA fallback files
+
+## Pages Routing Strategy
+
+The app keeps a browser-router architecture instead of switching to hash-based routing because Supabase auth flows may use URL fragments during callback handling.
+
+- `react-router-dom` still owns the in-app route model
+- `public/404.html` rewrites deep-link requests back to the app shell on GitHub Pages
+- `index.html` restores the requested route before the React app initializes
+
+This keeps the athlete-facing URLs clean while remaining compatible with GitHub Pages project-site hosting.
 
 ## Deployment Model
 
@@ -60,6 +72,7 @@ The secure frontend will continue to render against that shape as closely as pra
 - No backend SQL or service-role secrets are stored here
 - The anon key is acceptable in a public frontend because authorization is enforced server-side by Supabase Auth and backend policies
 - The frontend does not query privileged tables directly; it uses an authenticated backend boundary
+- The frontend contract stays aligned to the backend-owned payload keys instead of creating a second independent domain model
 
 ## Tradeoffs
 

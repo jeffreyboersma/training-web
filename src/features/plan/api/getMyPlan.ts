@@ -6,17 +6,38 @@ import { trainingPlanPayloadSchema, type TrainingPlanPayload } from '../../../ty
 export async function getMyPlan(session: Session): Promise<TrainingPlanPayload> {
   const response = await fetch(getEdgeFunctionUrl('get-my-plan'), {
     headers: {
+      Accept: 'application/json',
       Authorization: `Bearer ${session.access_token}`,
       'Content-Type': 'application/json',
     },
   });
 
   if (!response.ok) {
-    const message = await response.text();
+    const message = await readErrorMessage(response);
     throw new Error(message || 'Unable to fetch the current athlete plan.');
   }
 
   const payload = await response.json();
 
   return trainingPlanPayloadSchema.parse(payload);
+}
+
+async function readErrorMessage(response: Response) {
+  const body = await response.text();
+
+  if (!body) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(body) as { error?: unknown };
+
+    if (typeof parsed.error === 'string' && parsed.error.trim()) {
+      return parsed.error;
+    }
+  } catch {
+    return body;
+  }
+
+  return body;
 }

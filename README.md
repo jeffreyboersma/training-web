@@ -19,10 +19,12 @@ The frontend preserves the existing training plan rendering contract from the re
 - Hosting: GitHub Pages
 - App stack: React, TypeScript, Vite
 - Auth client: `@supabase/supabase-js`
-- Routing: `react-router-dom`
+- Routing: `react-router-dom` with a GitHub Pages SPA fallback for deep links and auth redirects
 - Runtime contract validation: `zod`
 
 See [docs/architecture.md](docs/architecture.md) for the full design.
+See [docs/local-setup.md](docs/local-setup.md) for local setup and env configuration.
+See [docs/deployment.md](docs/deployment.md) for Pages deployment and redirect guidance.
 
 ## Security Boundaries
 
@@ -55,6 +57,17 @@ npm install
 npm run dev
 ```
 
+Primary validation commands:
+
+```bash
+npm run lint
+npm run typecheck
+npm run test:run
+npm run build
+```
+
+The app expects only public-safe environment variables. Use [.env.example](.env.example) as the template.
+
 ## Validation
 
-The scaffold includes linting, formatting, type-checking, unit tests, and a build step suitable for CI.
+The app includes linting, formatting, type-checking, unit tests, and a production build suitable for CI and GitHub Pages deployment.
