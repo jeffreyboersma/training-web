@@ -1,0 +1,394 @@
+:root {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #1d1e24;
+  background:
+    radial-gradient(circle at top left, rgba(14, 116, 144, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(180, 83, 9, 0.16), transparent 24%),
+    linear-gradient(180deg, #faf7f0 0%, #f4efe5 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+code {
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(29, 30, 36, 0.12);
+  text-align: left;
+}
+
+.app-frame {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.site-header {
+  display: grid;
+  gap: 0.75rem;
+  align-items: end;
+  padding: 1rem 0 1.75rem;
+}
+
+.site-title,
+.hero-card h2,
+.panel-card h2,
+.panel-card h3,
+.panel-card h4,
+.panel-card strong,
+.auth-card h2 {
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  letter-spacing: -0.02em;
+}
+
+.site-title {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+}
+
+.site-summary,
+.muted-copy,
+.info-card p,
+.phase-card p,
+.session-purpose,
+.status-copy {
+  color: #4f5561;
+}
+
+.site-kicker,
+.eyebrow,
+.metric-label,
+.phase-badge {
+  margin: 0;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8c3d18;
+}
+
+.page-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-page {
+  grid-template-columns: minmax(0, 760px);
+}
+
+.hero-card,
+.panel-card {
+  border: 1px solid rgba(29, 30, 36, 0.1);
+  border-radius: 24px;
+  background: rgba(255, 251, 245, 0.9);
+  box-shadow: 0 18px 50px rgba(84, 62, 43, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+  background:
+    linear-gradient(135deg, rgba(255, 247, 237, 0.98), rgba(247, 240, 228, 0.96)),
+    rgba(255, 255, 255, 0.75);
+}
+
+.panel-card {
+  padding: 1.4rem;
+}
+
+.state-card {
+  max-width: 720px;
+}
+
+.auth-card {
+  max-width: 720px;
+}
+
+.hero-actions {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  justify-items: end;
+}
+
+.identity-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(14, 116, 144, 0.1);
+  color: #0d566c;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+}
+
+.metric-grid,
+.two-column-grid,
+.panel-subgrid,
+.phase-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.metric-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.two-column-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.panel-subgrid,
+.phase-grid,
+.stack-grid,
+.session-stack,
+.day-stack,
+.week-stack,
+.button-row {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.metric-card h3,
+.auth-card h2,
+.panel-card h2,
+.panel-card h3,
+.panel-card h4 {
+  margin: 0.3rem 0 0;
+}
+
+.section-heading {
+  margin-bottom: 1rem;
+}
+
+.section-heading h3 {
+  margin-top: 0.35rem;
+}
+
+.info-card,
+.mini-panel,
+.phase-card,
+.session-card,
+.notice-card {
+  border-radius: 18px;
+  border: 1px solid rgba(29, 30, 36, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+}
+
+.notice-card {
+  background: rgba(14, 116, 144, 0.08);
+}
+
+.notice-error {
+  background: rgba(180, 83, 9, 0.12);
+}
+
+.phase-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.phase-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(140, 61, 24, 0.08);
+}
+
+.text-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.compact-list {
+  margin: 0.25rem 0;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.25rem 0 1rem;
+}
+
+.field-label {
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(29, 30, 36, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.primary-button,
+.secondary-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.2rem;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #0f766e, #155e75);
+  color: #f7f8f9;
+}
+
+.secondary-button {
+  background: rgba(29, 30, 36, 0.08);
+  color: #1d1e24;
+}
+
+.status-copy {
+  margin: 0.3rem 0 0;
+}
+
+.success-copy {
+  color: #0f766e;
+}
+
+.error-copy {
+  color: #9a3412;
+}
+
+.week-card {
+  border: 1px solid rgba(29, 30, 36, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+}
+
+.week-card summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.week-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.week-card summary div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.day-card {
+  border-top: 1px solid rgba(29, 30, 36, 0.08);
+  padding-top: 0.9rem;
+}
+
+.day-card:first-child {
+  border-top: none;
+}
+
+.day-header,
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.session-card {
+  background: rgba(255, 248, 240, 0.8);
+}
+
+.session-meta {
+  margin: 0.4rem 0;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: 0.86rem;
+  color: #8c3d18;
+}
+
+.session-purpose {
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+.coach-note {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(14, 116, 144, 0.08);
+}
+
+.rich-copy p {
+  margin: 0.4rem 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .app-frame {
+    padding: 1rem 0.75rem 3rem;
+  }
+
+  .hero-card,
+  .week-card summary,
+  .day-header,
+  .session-header {
+    display: grid;
+  }
+
+  .hero-actions {
+    justify-items: start;
+  }
+}
