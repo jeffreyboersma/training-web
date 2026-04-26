@@ -9,8 +9,17 @@ export function normalizeBasePath(value: string | undefined): string {
   return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`;
 }
 
+export function normalizeAppOrigin(value: string | undefined): string | undefined {
+  if (!value || value.trim() === '') {
+    return undefined;
+  }
+
+  return value.trim().replace(/\/+$/, '');
+}
+
 export const appEnv = {
   appBasePath: normalizeBasePath(import.meta.env.VITE_APP_BASE_PATH),
+  appOrigin: normalizeAppOrigin(import.meta.env.VITE_APP_ORIGIN),
   edgeFunctionsBaseUrl: import.meta.env.VITE_SUPABASE_EDGE_FUNCTION_URL?.trim() ?? '',
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? '',
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL?.trim() ?? '',
@@ -42,8 +51,12 @@ export function buildAppUrl(origin: string, basePath: string, path = ''): string
   return new URL(buildAppPath(basePath, path), origin).toString();
 }
 
+export function getAppOrigin(currentOrigin: string): string {
+  return appEnv.appOrigin ?? currentOrigin;
+}
+
 export function toAppUrl(path = ''): string {
-  return buildAppUrl(window.location.origin, appEnv.appBasePath, path);
+  return buildAppUrl(getAppOrigin(window.location.origin), appEnv.appBasePath, path);
 }
 
 export function getEdgeFunctionUrl(functionName: string): string {

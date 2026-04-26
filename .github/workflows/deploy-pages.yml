@@ -19,7 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_APP_BASE_PATH: ${{ vars.VITE_APP_BASE_PATH || format('/{0}/', github.event.repository.name) }}
+      VITE_APP_BASE_PATH: ${{ vars.VITE_APP_BASE_PATH || '/' }}
+      VITE_APP_ORIGIN: ${{ vars.VITE_APP_ORIGIN || 'https://training.jeffreyboersma.com' }}
       VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
       VITE_SUPABASE_EDGE_FUNCTION_URL: ${{ vars.VITE_SUPABASE_EDGE_FUNCTION_URL }}

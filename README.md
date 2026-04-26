@@ -2,6 +2,8 @@
 
 Public React frontend for the multi-user training application.
 
+Production URL: https://training.jeffreyboersma.com/
+
 This repo is responsible for authentication UX, the athlete-facing application shell, and runtime plan rendering. It does not contain user data, plan data, secrets, or private backend logic.
 
 ## Responsibilities
@@ -10,13 +12,13 @@ This repo is responsible for authentication UX, the athlete-facing application s
 - Authenticate users with Supabase Auth
 - Fetch the authenticated athlete's plan from the backend at runtime
 - Validate backend responses against the frontend contract before rendering
-- Build static assets suitable for GitHub Pages deployment
+- Build static assets suitable for GitHub Pages custom-domain deployment
 
 ## Architecture
 
 The frontend preserves the existing training plan rendering contract from the reference app. Instead of loading plan constants from a checked-in `training-data.js`, it fetches a payload with the same practical shape from a private Supabase backend after login.
 
-- Hosting: GitHub Pages
+- Hosting: GitHub Pages custom domain at https://training.jeffreyboersma.com/
 - App stack: React, TypeScript, Vite
 - Auth client: `@supabase/supabase-js`
 - Routing: `react-router-dom` with a GitHub Pages SPA fallback for deep links and auth redirects

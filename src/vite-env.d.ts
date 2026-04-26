@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_BASE_PATH?: string;
+  readonly VITE_APP_ORIGIN?: string;
   readonly VITE_SUPABASE_ANON_KEY?: string;
   readonly VITE_SUPABASE_EDGE_FUNCTION_URL?: string;
   readonly VITE_SUPABASE_URL?: string;

@@ -22,6 +22,10 @@ Required values for local auth:
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` when edge functions are served from a custom base
 - `VITE_APP_BASE_PATH`
 
+Optional value:
+
+- `VITE_APP_ORIGIN` when you need auth emails to return to a canonical public origin instead of the current browser origin
+
 Where to get them in Supabase:
 
 - `VITE_SUPABASE_URL`: Supabase project URL
@@ -59,6 +63,7 @@ npm run verify:pages-fallback
 ## Backend expectations while developing
 
 - Supabase auth must be configured for the local frontend origin
+- if you use a deployed Supabase project, `supabase/config.toml` should be pushed so the hosted auth redirect allowlist matches the frontend callback URLs
 - `get-my-plan` must be deployed and reachable from the configured browser environment
 - the backend payload must match the contract rendered in `src/types/training-plan.ts`
 - the logged-in athlete must already have an assigned published plan version

@@ -3,6 +3,7 @@
 ## GitHub Pages
 
 This repo is designed to deploy as static assets on GitHub Pages.
+The current production URL is `https://training.jeffreyboersma.com/`.
 
 ## Router and deep-link behavior
 
@@ -20,16 +21,18 @@ The same fallback also protects Supabase auth redirects that land directly on pr
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` if edge functions are served from a custom domain
-- `VITE_APP_BASE_PATH` only when production is served from a custom domain or any non-default Pages path
+- `VITE_APP_BASE_PATH` only when production is not served from the custom-domain root
+- `VITE_APP_ORIGIN` only when the canonical public origin is not `https://training.jeffreyboersma.com`
 
 The GitHub Pages workflow reads the public-safe Supabase values from GitHub repository variables and fails fast if the required values are missing.
-If `VITE_APP_BASE_PATH` is not provided, the workflow derives it from the repository name so the built asset paths and router basename stay aligned with the default Pages project-site URL.
-For a custom domain mounted at the site root, set `VITE_APP_BASE_PATH=/` in the repository variables.
+If `VITE_APP_BASE_PATH` is not provided, the workflow defaults it to `/` so the build matches the current production custom-domain root.
+If `VITE_APP_ORIGIN` is not provided, the workflow defaults it to `https://training.jeffreyboersma.com` so auth callbacks point at the public site instead of whichever host initiated the sign-in request.
+If deployment moves away from the current custom domain, override both variables in the repository settings.
 
 ## Base Path
 
-The deploy workflow defaults `VITE_APP_BASE_PATH` to `/<repo-name>/` so React Router and Vite assets work correctly on GitHub Pages project sites.
-Override it with `/` when the site is served from a custom domain root such as `https://training.jeffreyboersma.com`.
+The deploy workflow defaults `VITE_APP_BASE_PATH` to `/` so React Router and Vite assets match the current custom-domain root deployment.
+Override it when publishing the app at a non-root path.
 
 ## Supabase redirect URLs
 
@@ -38,16 +41,15 @@ The Supabase project must allow the exact frontend origins and callback location
 Recommended redirect URLs:
 
 - local development: `http://localhost:5173/app`
-- GitHub Pages project site: `https://<owner>.github.io/<repo-name>/app`
-- custom domain root: `https://<custom-domain>/app`
+- production custom domain: `https://training.jeffreyboersma.com/app`
 
 Because the Pages SPA fallback restores deep links before React initializes, redirecting to `/app` remains safe on GitHub Pages.
+The frontend build can now pin auth callbacks to a canonical public origin so cross-device email sign-in does not fall back to a loopback host such as `127.0.0.1`.
 
 Session restoration expectations:
 
 - local development resolves magic links to `http://localhost:5173/app`
-- deployed Pages resolves magic links to `https://<owner>.github.io/<repo-name>/app`
-- custom-domain Pages resolves magic links to `https://<custom-domain>/app`
+- production resolves magic links to `https://training.jeffreyboersma.com/app`
 - when the callback lands directly on `/app` with an auth fragment, the route remains intact and Supabase session detection runs after the app shell loads
 
 ## Backend integration assumptions
