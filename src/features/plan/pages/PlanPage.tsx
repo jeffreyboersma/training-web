@@ -181,7 +181,12 @@ export function PlanPage() {
       </section>
 
       {currentView === 'calendar' ? (
-        <TrainingCalendar anchorWeekNumber={anchorWeek.week} onSelectSession={setSelection} weeklyPlans={data.weeklyPlans} />
+        <TrainingCalendar
+          key={anchorWeek.week}
+          anchorWeekNumber={anchorWeek.week}
+          onSelectSession={setSelection}
+          weeklyPlans={data.weeklyPlans}
+        />
       ) : (
         <PlanOverview
           anchorWeek={anchorWeek}

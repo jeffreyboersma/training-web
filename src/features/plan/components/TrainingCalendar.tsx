@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { formatDayLabel, getSessionAccent, getWeekRangeLabel, type SessionSelection, type TrainingWeek } from '../lib/plan-derived';
 
@@ -10,10 +10,6 @@ type TrainingCalendarProps = {
 
 export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlans }: TrainingCalendarProps) {
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(() => new Set([anchorWeekNumber]));
-
-  useEffect(() => {
-    setExpandedWeeks(new Set([anchorWeekNumber]));
-  }, [anchorWeekNumber]);
 
   function toggleWeek(weekNumber: number) {
     setExpandedWeeks((currentWeeks) => {

@@ -9,7 +9,7 @@ import { appEnv } from '../lib/config/env';
 const LoginPage = lazy(() => import('../features/auth/pages/LoginPage').then((module) => ({ default: module.LoginPage })));
 const PlanPage = lazy(() => import('../features/plan/pages/PlanPage').then((module) => ({ default: module.PlanPage })));
 
-function RouteLoadingState({ message, title }: { message: string; title: string }) {
+function renderRouteLoadingState({ message, title }: { message: string; title: string }) {
   return (
     <main className="page-shell">
       <StatePanel eyebrow="Loading" message={message} title={title} />
@@ -31,12 +31,10 @@ export const router = createBrowserRouter(
           path: 'login',
           element: (
             <Suspense
-              fallback={
-                <RouteLoadingState
-                  title="Opening sign-in"
-                  message="Preparing your sign-in screen."
-                />
-              }
+              fallback={renderRouteLoadingState({
+                title: 'Opening sign-in',
+                message: 'Preparing your sign-in screen.',
+              })}
             >
               <LoginPage />
             </Suspense>
@@ -47,12 +45,10 @@ export const router = createBrowserRouter(
           element: (
             <ProtectedRoute>
               <Suspense
-                fallback={
-                  <RouteLoadingState
-                    title="Loading your plan"
-                    message="Getting your training view ready."
-                  />
-                }
+                fallback={renderRouteLoadingState({
+                  title: 'Loading your plan',
+                  message: 'Getting your training view ready.',
+                })}
               >
                 <PlanPage />
               </Suspense>
