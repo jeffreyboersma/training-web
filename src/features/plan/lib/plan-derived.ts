@@ -97,22 +97,22 @@ export function getDaysUntil(date: string, todayIso = getTodayIso()) {
 export function getSessionAccent(sessionType: string) {
   switch (sessionType.toLowerCase()) {
     case 'bike':
-      return '#0f766e';
+      return 'var(--activity-bike)';
     case 'brick':
-      return '#2563eb';
+      return 'var(--activity-brick)';
     case 'hyrox':
-      return '#c2410c';
+      return 'var(--activity-hyrox)';
     case 'prerace':
     case 'race':
-      return '#b45309';
+      return 'var(--activity-race)';
     case 'run':
-      return '#7c3aed';
+      return 'var(--activity-run)';
     case 'strength':
-      return '#374151';
+      return 'var(--activity-strength)';
     case 'swim':
-      return '#0369a1';
+      return 'var(--activity-swim)';
     default:
-      return '#155e75';
+      return 'var(--activity-default)';
   }
 }
 

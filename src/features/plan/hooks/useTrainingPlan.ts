@@ -51,7 +51,7 @@ export function useTrainingPlan() {
 
         setState({
           data: null,
-          error: caughtError instanceof Error ? caughtError.message : 'Unable to fetch the plan.',
+          error: caughtError instanceof Error ? caughtError.message : 'We couldn\'t load your plan right now.',
           loading: false,
         });
       });
@@ -63,7 +63,7 @@ export function useTrainingPlan() {
 
   return {
     data: configured && session ? state.data : null,
-    error: !configured ? 'Supabase environment variables are missing.' : session ? state.error : null,
+    error: !configured ? 'Sign-in is not available right now.' : session ? state.error : null,
     loading: configured && Boolean(session) ? state.loading : false,
     refresh: () => setRequestVersion((current) => current + 1),
   };

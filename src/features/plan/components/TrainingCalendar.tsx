@@ -13,7 +13,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         <div>
           <p className="eyebrow">Calendar</p>
           <h3>Full training calendar</h3>
-          <p className="muted-copy">Every planned week is rendered directly from the authenticated backend payload.</p>
+          <p className="muted-copy">Scan the full block, jump between weeks, and open any session for details.</p>
         </div>
         <nav className="calendar-nav" aria-label="Jump to week">
           {weeklyPlans.map((week) => (

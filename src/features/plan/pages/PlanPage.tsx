@@ -24,8 +24,8 @@ export function PlanPage() {
       <main className="page-shell">
         <StatePanel
           eyebrow="Loading plan"
-          message="The app is loading the authenticated athlete payload from the backend."
-          title="Fetching your assigned plan"
+          message="Pulling your latest training schedule into view."
+          title="Opening your plan"
         />
       </main>
     );
@@ -37,7 +37,7 @@ export function PlanPage() {
         <StatePanel
           eyebrow="Plan unavailable"
           message={error}
-          title="Unable to load the backend plan"
+          title="We couldn&apos;t load your plan"
           tone="error"
           actions={
             <button className="primary-button" type="button" onClick={refresh}>
@@ -54,8 +54,8 @@ export function PlanPage() {
       <main className="page-shell">
         <StatePanel
           eyebrow="No plan assigned"
-          message="Once a plan version is assigned in the backend, it will appear here automatically."
-          title="There is no active training plan yet"
+          message="Your next block has not been published yet. Check back soon."
+          title="No active plan right now"
         />
       </main>
     );
@@ -66,7 +66,7 @@ export function PlanPage() {
       <main className="page-shell">
         <StatePanel
           eyebrow="Plan unavailable"
-          message="The backend returned a plan payload without any weekly schedule data."
+          message="This plan is missing weekly schedule details."
           title="The schedule is incomplete"
           tone="error"
         />
@@ -95,7 +95,7 @@ export function PlanPage() {
     <main className="page-shell plan-shell">
       <section className="dashboard-hero">
         <div className="hero-copy">
-          <p className="eyebrow">Authenticated athlete view</p>
+          <p className="eyebrow">Current plan</p>
           <h2>{data.plan.title}</h2>
           <p className="hero-summary">
             {data.plan.athlete} • {data.plan.startDate} to {data.plan.endDate}
@@ -106,7 +106,7 @@ export function PlanPage() {
               <p className="metric-label">Next event</p>
               <strong>{nextEvent?.name ?? 'No event configured'}</strong>
               <span className="muted-copy">
-                {nextEvent ? `${nextEvent.date} • ${nextEvent.sport}` : 'Add PLAN.events in the backend payload.'}
+                {nextEvent ? `${nextEvent.date} • ${nextEvent.sport}` : 'Add an event to this plan to track your next target.'}
               </span>
             </article>
 
@@ -133,12 +133,17 @@ export function PlanPage() {
         <aside className="hero-actions">
           <div className="identity-chip">{session?.user.email ?? data.plan.athlete}</div>
           <div className="hero-meta-card">
-            <strong>Live backend data</strong>
-            <p>The athlete app is rendering the validated payload returned by `get-my-plan`.</p>
+            <strong>Stay locked in</strong>
+            <p>{anchorWeek.recovery ? 'This week is built to absorb the work.' : anchorWeek.focus}</p>
           </div>
-          <button className="secondary-button" type="button" onClick={() => void signOut()}>
-            Sign out
-          </button>
+          <div className="button-row button-row--stacked">
+            <button className="secondary-button" type="button" onClick={refresh}>
+              Refresh plan
+            </button>
+            <button className="ghost-button" type="button" onClick={() => void signOut()}>
+              Sign out
+            </button>
+          </div>
         </aside>
       </section>
 
@@ -169,8 +174,8 @@ export function PlanPage() {
         </div>
 
         <div className="toolbar-actions">
-          <button className="secondary-button" type="button" onClick={refresh}>
-            Refresh plan
+          <button className="secondary-button" type="button" onClick={() => handleViewChange(currentView === 'overview' ? 'calendar' : 'overview')}>
+            {currentView === 'overview' ? 'Jump to calendar' : 'Back to overview'}
           </button>
         </div>
       </section>

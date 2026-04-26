@@ -33,8 +33,8 @@ export const router = createBrowserRouter(
             <Suspense
               fallback={
                 <RouteLoadingState
-                  title="Loading sign-in"
-                  message="Preparing the secure sign-in flow and static route shell."
+                  title="Opening sign-in"
+                  message="Preparing your sign-in screen."
                 />
               }
             >
@@ -49,8 +49,8 @@ export const router = createBrowserRouter(
               <Suspense
                 fallback={
                   <RouteLoadingState
-                    title="Loading training plan"
-                    message="Preparing the authenticated athlete workspace."
+                    title="Loading your plan"
+                    message="Getting your training view ready."
                   />
                 }
               >

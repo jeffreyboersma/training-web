@@ -30,7 +30,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
         <section className="panel-card anchor-week-card">
           <div className="section-heading section-heading--split">
             <div>
-              <p className="eyebrow">Current focus week</p>
+              <p className="eyebrow">This week</p>
               <h3>
                 Week {anchorWeek.week} • {anchorWeek.phase}
               </h3>
@@ -88,7 +88,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
         <section className="panel-card">
           <div className="section-heading">
             <p className="eyebrow">Upcoming sessions</p>
-            <h3>What is next on the calendar</h3>
+            <h3>Next up</h3>
           </div>
           {upcomingSessions.length ? (
             <div className="session-list">
@@ -115,7 +115,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
 
         <section className="panel-card">
           <div className="section-heading">
-            <p className="eyebrow">Race targets</p>
+            <p className="eyebrow">Targets</p>
             <h3>Events and phase progression</h3>
           </div>
 
@@ -160,8 +160,8 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
       <aside className="overview-rail stack-grid">
         <section className="panel-card">
           <div className="section-heading">
-            <p className="eyebrow">Immediate actions</p>
-            <h3>Operational checklist</h3>
+            <p className="eyebrow">On deck</p>
+            <h3>Small wins this week</h3>
           </div>
           {data.actionItems.length ? (
             <ul className="text-list action-list">
@@ -176,7 +176,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
 
         <section className="panel-card">
           <div className="section-heading">
-            <p className="eyebrow">Strategy</p>
+            <p className="eyebrow">Guidance</p>
             <h3>Strength and race notes</h3>
           </div>
           {data.strengthApproach ? <RichTextContent content={data.strengthApproach} /> : null}
@@ -226,8 +226,8 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
 
         <section className="panel-card">
           <div className="section-heading">
-            <p className="eyebrow">Legend</p>
-            <h3>Session language</h3>
+            <p className="eyebrow">Key</p>
+            <h3>Session types</h3>
           </div>
           <div className="legend-list">
             {data.legend.map((entry) => (

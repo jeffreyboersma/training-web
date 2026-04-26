@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { StatePanel } from '../../../app/components/StatePanel';
-import { appEnv } from '../../../lib/config/env';
 import { useAuthSession } from '../hooks/useAuthSession';
 
 export function LoginPage() {
@@ -21,9 +20,9 @@ export function LoginPage() {
     return (
       <main className="page-shell auth-page">
         <StatePanel
-          eyebrow="Authorizing"
-          message="The app is completing your sign-in flow and restoring any existing athlete session."
-          title="Checking secure access"
+          eyebrow="Signing you in"
+          message="Restoring your access and preparing your training view."
+          title="Checking your session"
         />
       </main>
     );
@@ -39,10 +38,10 @@ export function LoginPage() {
 
     try {
       await signInWithOtp(email.trim());
-      setStatus('Check your email for the secure sign-in link.');
+      setStatus('Check your email for your sign-in link.');
       setEmail('');
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : 'Unable to send sign-in link.');
+      setError(caughtError instanceof Error ? caughtError.message : 'Unable to send your sign-in link.');
     } finally {
       setSubmitting(false);
     }
@@ -52,24 +51,21 @@ export function LoginPage() {
     <main className="page-shell auth-page">
       <div className="auth-layout">
         <section className="panel-card auth-card">
-          <p className="eyebrow">Secure athlete access</p>
-          <h2>Sign in to load your live training plan</h2>
-          <p className="muted-copy">
-            This public client never embeds plan data. After login, it requests only your assigned plan from the authenticated
-            backend boundary.
-          </p>
+          <p className="eyebrow">Welcome back</p>
+          <h2>Your training, in one focused place</h2>
+          <p className="muted-copy">Sign in with your email to open your current plan, weekly sessions, and upcoming race targets.</p>
 
           {!configured ? (
             <div className="notice-card notice-error">
-              <strong>Frontend configuration is incomplete.</strong>
-              <p>Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY before testing authentication.</p>
+              <strong>Sign-in is not available right now.</strong>
+              <p>Finish the app sign-in setup, then try again.</p>
             </div>
           ) : null}
 
           {missingConfig && configured ? (
             <div className="notice-card">
-              <strong>Authentication is required.</strong>
-              <p>Sign in first so the app can request only your plan from the backend.</p>
+              <strong>Sign in to continue.</strong>
+              <p>Your plan becomes available as soon as your session is active.</p>
             </div>
           ) : null}
 
@@ -88,9 +84,9 @@ export function LoginPage() {
               disabled={!configured || submitting}
               required
             />
-            <p className="field-help">The magic link returns to this GitHub Pages app and restores your athlete session in the browser.</p>
+            <p className="field-help">We&apos;ll send a one-time link that brings you straight back into your training dashboard.</p>
             <button className="primary-button" type="submit" disabled={!configured || submitting}>
-              {submitting ? 'Sending secure link...' : 'Send magic link'}
+              {submitting ? 'Sending link...' : 'Email me a sign-in link'}
             </button>
           </form>
 
@@ -100,27 +96,27 @@ export function LoginPage() {
 
         <aside className="panel-card auth-sidecar">
           <div className="section-heading">
-            <p className="eyebrow">What happens next</p>
-            <h3>Pages-safe, backend-authenticated flow</h3>
+            <p className="eyebrow">What you get</p>
+            <h3>A cleaner training ritual</h3>
           </div>
           <div className="stack-grid">
             <article className="mini-panel">
-              <strong>1. Email link</strong>
-              <p>Supabase sends a one-time sign-in link to the athlete email address you enter.</p>
+              <strong>Your week at a glance</strong>
+              <p>See the current block, your key sessions, and what is coming up next without digging through notes.</p>
             </article>
             <article className="mini-panel">
-              <strong>2. Static-host callback</strong>
-              <p>GitHub Pages serves the app shell, then restores the requested route so auth redirects survive project-site hosting.</p>
+              <strong>Session detail when you need it</strong>
+              <p>Open any workout for duration, intensity, purpose, and coaching notes in a distraction-free view.</p>
             </article>
             <article className="mini-panel">
-              <strong>3. Secure plan fetch</strong>
-              <p>The app uses the session access token to call the backend `get-my-plan` function at runtime.</p>
+              <strong>Clear focus around key events</strong>
+              <p>Track upcoming races, recovery weeks, and phase changes with distinct visual cues that stay easy to scan.</p>
             </article>
           </div>
 
           <div className="notice-card auth-redirect-card">
-            <strong>Expected post-login route</strong>
-            <p>{appEnv.appBasePath === '/' ? '/app' : `${appEnv.appBasePath}app`}</p>
+            <strong>Private by default</strong>
+            <p>Your plan appears only after you sign in with your email link.</p>
           </div>
         </aside>
       </div>

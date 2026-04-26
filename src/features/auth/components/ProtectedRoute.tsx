@@ -15,9 +15,9 @@ export function ProtectedRoute({ children }: PropsWithChildren) {
     return (
       <main className="page-shell">
         <StatePanel
-          eyebrow="Authorizing"
-          message="The app is verifying whether an authenticated athlete session already exists."
-          title="Checking your session"
+          eyebrow="Signing you in"
+          message="Checking whether you already have an active session."
+          title="Restoring your access"
         />
       </main>
     );

@@ -92,7 +92,7 @@ export function SessionDialog({ onClose, selection }: SessionDialogProps) {
 
           {week.coachingNotes ? (
             <article className="dialog-panel">
-              <h3>Coaching note</h3>
+              <h3>Coach note</h3>
               <RichTextContent content={week.coachingNotes} />
             </article>
           ) : null}

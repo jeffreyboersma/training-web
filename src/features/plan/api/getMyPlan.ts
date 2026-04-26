@@ -19,7 +19,15 @@ export async function getMyPlan(session: Session): Promise<TrainingPlanPayload |
       return null;
     }
 
-    throw new Error(message || 'Unable to fetch the current athlete plan.');
+    if (response.status === 401 || response.status === 403) {
+      throw new Error('Your session has expired. Sign in again to continue.');
+    }
+
+    if (response.status >= 500) {
+      throw new Error('Your plan is temporarily unavailable. Try again in a moment.');
+    }
+
+    throw new Error(hasTechnicalTerms(message) ? 'We couldn\'t load your plan right now.' : message || 'We couldn\'t load your plan right now.');
   }
 
   const payload = await response.json();
@@ -45,4 +53,8 @@ async function readErrorMessage(response: Response) {
   }
 
   return body;
+}
+
+function hasTechnicalTerms(message: string | null) {
+  return Boolean(message && /backend|payload|supabase|edge function|database|function/i.test(message));
 }

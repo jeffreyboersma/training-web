@@ -44,7 +44,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   async function signInWithOtp(email: string) {
     if (!supabase) {
-      throw new Error('Supabase environment variables are not configured.');
+      throw new Error('Sign-in is not available right now.');
     }
 
     const { error } = await supabase.auth.signInWithOtp({
