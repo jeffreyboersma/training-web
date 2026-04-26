@@ -64,7 +64,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
                         onClick={() => onSelectSession({ day, session, week: anchorWeek })}
                       >
                         <strong>{session.label}</strong>
-                        <span>
+                        <span className="session-button-meta">
                           {session.duration} • {session.intensity}
                         </span>
                       </button>
@@ -102,7 +102,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
                 >
                   <span className="session-inline-date">{formatFullDate(selection.day.date)}</span>
                   <strong>{selection.session.label}</strong>
-                  <span>
+                  <span className="session-button-meta">
                     {selection.session.duration} • {selection.session.intensity}
                   </span>
                 </button>
