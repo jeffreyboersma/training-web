@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { formatDayLabel, getSessionAccent, getWeekRangeLabel, type SessionSelection, type TrainingWeek } from '../lib/plan-derived';
 
 type TrainingCalendarProps = {
@@ -7,6 +9,16 @@ type TrainingCalendarProps = {
 };
 
 export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlans }: TrainingCalendarProps) {
+  const [selectedWeek, setSelectedWeek] = useState(String(anchorWeekNumber));
+
+  function handleWeekChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const nextWeek = event.target.value;
+    setSelectedWeek(nextWeek);
+
+    const target = document.getElementById(`week-${nextWeek}`);
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   return (
     <section className="panel-card calendar-shell" id="calendar-panel" role="tabpanel" aria-labelledby="view-tab-calendar">
       <div className="section-heading section-heading--split">
@@ -15,17 +27,18 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
           <h3>Full training calendar</h3>
           <p className="muted-copy">Scan the full block, jump between weeks, and open any session for details.</p>
         </div>
-        <nav className="calendar-nav" aria-label="Jump to week">
-          {weeklyPlans.map((week) => (
-            <a
-              key={week.week}
-              className={`week-link${week.week === anchorWeekNumber ? ' week-link--active' : ''}`}
-              href={`#week-${week.week}`}
-            >
-              W{week.week}
-            </a>
-          ))}
-        </nav>
+        <div className="calendar-jump-control">
+          <label className="calendar-jump-label" htmlFor="calendar-week-select">
+            Jump to week
+          </label>
+          <select id="calendar-week-select" className="calendar-week-select" value={selectedWeek} onChange={handleWeekChange}>
+            {weeklyPlans.map((week) => (
+              <option key={week.week} value={week.week}>
+                Week {week.week} - {week.phase}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="calendar-stack">
