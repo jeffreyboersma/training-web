@@ -38,4 +38,18 @@ describe('getMyPlan', () => {
 
     await expect(getMyPlan(session)).rejects.toThrow('Origin not allowed.');
   });
+
+  it('normalizes auth failures to the session-expired message', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ error: 'JWT expired' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 403,
+        }),
+      ),
+    );
+
+    await expect(getMyPlan(session)).rejects.toThrow('Your session has expired. Sign in again to continue.');
+  });
 });

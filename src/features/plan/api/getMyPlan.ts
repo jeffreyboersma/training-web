@@ -3,6 +3,8 @@ import type { Session } from '@supabase/supabase-js';
 import { getEdgeFunctionUrl } from '../../../lib/config/env';
 import { trainingPlanPayloadSchema, type TrainingPlanPayload } from '../../../types/training-plan';
 
+const SESSION_EXPIRED_MESSAGE = 'Your session has expired. Sign in again to continue.';
+
 export async function getMyPlan(session: Session): Promise<TrainingPlanPayload | null> {
   const response = await fetch(getEdgeFunctionUrl('get-my-plan'), {
     headers: {
@@ -19,8 +21,8 @@ export async function getMyPlan(session: Session): Promise<TrainingPlanPayload |
       return null;
     }
 
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Your session has expired. Sign in again to continue.');
+    if (response.status === 401 || (response.status === 403 && isAuthErrorMessage(message))) {
+      throw new Error(SESSION_EXPIRED_MESSAGE);
     }
 
     if (response.status >= 500) {
@@ -57,4 +59,9 @@ async function readErrorMessage(response: Response) {
 
 function hasTechnicalTerms(message: string | null) {
   return Boolean(message && /backend|payload|supabase|edge function|database|function/i.test(message));
+}
+
+function isAuthErrorMessage(message: string | null) {
+  return message === SESSION_EXPIRED_MESSAGE
+    || Boolean(message && /expired|sign in|sign-in|unauthorized|invalid jwt|jwt expired|authentication/i.test(message));
 }
