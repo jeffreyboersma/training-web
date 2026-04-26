@@ -81,7 +81,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                             <span>{session.duration}</span>
                           </span>
                           <span className="session-button-meta">
-                            {session.type}
+                            {session.type.toUpperCase()}
                             {session.sport ? ` • ${session.sport}` : ''}
                             {session.intensity ? ` • ${session.intensity}` : ''}
                           </span>
