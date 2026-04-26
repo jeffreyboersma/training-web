@@ -9,14 +9,35 @@
 
 ## Environment variables
 
-Copy `.env.example` and provide only public-safe values:
+Create `.env.local` from `.env.example` and provide only public-safe values:
+
+```bash
+cp .env.example .env.local
+```
+
+Required values for local auth:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` when edge functions are served from a custom base
 - `VITE_APP_BASE_PATH`
 
+Where to get them in Supabase:
+
+- `VITE_SUPABASE_URL`: Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Supabase anon public key
+
+These are available in the Supabase dashboard under `Project Settings` -> `API`.
+
 For local development, `VITE_APP_BASE_PATH=/` is usually the correct value.
+
+Example local file:
+
+```dotenv
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_APP_BASE_PATH=/
+```
 
 ## Start the app
 
