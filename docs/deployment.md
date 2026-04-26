@@ -20,9 +20,9 @@ The same fallback also protects Supabase auth redirects that land directly on pr
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` if edge functions are served from a custom domain
-- `VITE_APP_BASE_PATH` for the Pages project-site base path
 
 The GitHub Pages workflow reads the public-safe Supabase values from GitHub repository variables and fails fast if the required values are missing.
+`VITE_APP_BASE_PATH` is not a repository variable in production; the workflow derives it from the repository name so the built asset paths and router basename stay aligned with the Pages project-site URL.
 
 ## Base Path
 

@@ -71,7 +71,7 @@ This keeps the athlete-facing URLs clean while remaining compatible with GitHub 
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
   - `VITE_SUPABASE_EDGE_FUNCTION_URL` if a non-default function base is required
-  - `VITE_APP_BASE_PATH` for repository-specific Pages paths
+- The Pages deployment workflow derives `VITE_APP_BASE_PATH` from the repository name instead of expecting a separately managed production variable
 
 ## Security Model
 
