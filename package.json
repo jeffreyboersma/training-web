@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.app.json && vite build",
+    "verify:pages-fallback": "node scripts/verify-pages-fallback.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",

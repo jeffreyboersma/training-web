@@ -11,6 +11,7 @@ The app uses a browser-router strategy plus static SPA fallback files.
 - `index.html` restores any rewritten route before React boots
 - `public/404.html` rewrites deep-link requests back to the app shell
 - This is required for project-site hosting because direct requests like `/repo-name/app` are otherwise served as 404s by GitHub Pages
+- `npm run verify:pages-fallback` validates the built `dist/index.html` and `dist/404.html` artifacts against deep links, query strings, and auth-fragment callbacks
 
 The same fallback also protects Supabase auth redirects that land directly on protected routes.
 
@@ -20,6 +21,8 @@ The same fallback also protects Supabase auth redirects that land directly on pr
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL` if edge functions are served from a custom domain
 - `VITE_APP_BASE_PATH` for the Pages project-site base path
+
+The GitHub Pages workflow reads the public-safe Supabase values from GitHub repository variables and fails fast if the required values are missing.
 
 ## Base Path
 
@@ -36,6 +39,12 @@ Recommended redirect URLs:
 
 Because the Pages SPA fallback restores deep links before React initializes, redirecting to `/app` remains safe on GitHub Pages.
 
+Session restoration expectations:
+
+- local development resolves magic links to `http://localhost:5173/app`
+- deployed Pages resolves magic links to `https://<owner>.github.io/<repo-name>/app`
+- when the callback lands directly on `/app` with an auth fragment, the route remains intact and Supabase session detection runs after the app shell loads
+
 ## Backend integration assumptions
 
 This frontend assumes all of the following remain true:
@@ -45,6 +54,8 @@ This frontend assumes all of the following remain true:
 - the backend continues to validate authorization server-side
 - edge-function CORS allows the Pages origin and local dev origin
 - no service-role credential is ever required in browser code
+
+The frontend now explicitly treats the backend `No active plan assignment found.` response as the intended athlete empty state instead of a generic error panel.
 
 ## Notes
 

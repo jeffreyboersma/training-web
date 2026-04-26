@@ -64,10 +64,11 @@ npm run lint
 npm run typecheck
 npm run test:run
 npm run build
+npm run verify:pages-fallback
 ```
 
 The app expects only public-safe environment variables. Use [.env.example](.env.example) as the template.
 
 ## Validation
 
-The app includes linting, formatting, type-checking, unit tests, and a production build suitable for CI and GitHub Pages deployment.
+The app includes linting, formatting, type-checking, unit tests, a cross-repo backend fixture parity check when the sibling backend repo is present, a production build, and a built-artifact Pages fallback verifier.

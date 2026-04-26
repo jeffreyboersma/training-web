@@ -19,8 +19,9 @@
             return index === 0 ? segment : segment.replace(/~and~/g, '&');
           })
           .join('?');
+        var basePath = location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
 
-        window.history.replaceState(null, '', decoded + location.hash);
+        window.history.replaceState(null, '', basePath + decoded + location.hash);
       })();
     </script>
   </head>

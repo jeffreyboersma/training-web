@@ -10,9 +10,9 @@
         var isGithubProjectSite = location.hostname.endsWith('.github.io') && segments.length > 1;
         var baseSegments = isGithubProjectSite ? 1 : 0;
         var basePath = '/' + segments.slice(0, baseSegments).join('/');
-        var routePath = '/' + segments.slice(baseSegments).join('/');
+        var routePath = '/' + segments.slice(baseSegments).join('/').replace(/&/g, '~and~');
         var normalizedBasePath = basePath === '/' ? '' : basePath;
-        var query = routePath + location.search.replace(/&/g, '~and~') + location.hash;
+        var query = routePath + (location.search ? '&' + location.search.slice(1).replace(/&/g, '~and~') : '') + location.hash;
 
         location.replace(location.origin + normalizedBasePath + '/?' + query);
       })();

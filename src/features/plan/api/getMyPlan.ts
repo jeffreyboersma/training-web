@@ -3,7 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { getEdgeFunctionUrl } from '../../../lib/config/env';
 import { trainingPlanPayloadSchema, type TrainingPlanPayload } from '../../../types/training-plan';
 
-export async function getMyPlan(session: Session): Promise<TrainingPlanPayload> {
+export async function getMyPlan(session: Session): Promise<TrainingPlanPayload | null> {
   const response = await fetch(getEdgeFunctionUrl('get-my-plan'), {
     headers: {
       Accept: 'application/json',
@@ -14,6 +14,11 @@ export async function getMyPlan(session: Session): Promise<TrainingPlanPayload> 
 
   if (!response.ok) {
     const message = await readErrorMessage(response);
+
+    if (response.status === 404 && message === 'No active plan assignment found.') {
+      return null;
+    }
+
     throw new Error(message || 'Unable to fetch the current athlete plan.');
   }
 

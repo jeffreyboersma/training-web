@@ -32,6 +32,7 @@ npm run lint
 npm run typecheck
 npm run test:run
 npm run build
+npm run verify:pages-fallback
 ```
 
 ## Backend expectations while developing
@@ -40,3 +41,9 @@ npm run build
 - `get-my-plan` must be deployed and reachable from the configured browser environment
 - the backend payload must match the contract rendered in `src/types/training-plan.ts`
 - the logged-in athlete must already have an assigned published plan version
+
+## Redirect and no-plan checks
+
+- Supabase must allow `http://localhost:5173/app` as a redirect URL for local magic-link testing
+- If the backend returns `No active plan assignment found.`, the app should show the athlete empty state instead of an error panel
+- `npm run verify:pages-fallback` verifies the static Pages fallback artifacts, but the deployed Pages URL still needs a real auth smoke test

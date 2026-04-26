@@ -27,6 +27,13 @@ The reference app currently derives its UI from a normalized payload equivalent 
 
 The secure frontend will continue to render against that shape as closely as practical. The main change is transport: the payload comes from the backend after authentication instead of from a checked-in JavaScript file.
 
+## Contract Alignment Strategy
+
+- The backend JSON schema remains the source of truth for payload structure.
+- The frontend keeps a strict Zod validator over the same practical keys and required fields.
+- Frontend tests validate the sibling backend sample payload when the backend repo is present in the workspace.
+- Any contract change should update the backend schema, backend sample fixture, and frontend validator in the same change set.
+
 ## Runtime Data Flow
 
 1. Athlete opens the GitHub Pages app.

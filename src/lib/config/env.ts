@@ -1,4 +1,4 @@
-function normalizeBasePath(value: string | undefined): string {
+export function normalizeBasePath(value: string | undefined): string {
   if (!value || value.trim() === '' || value.trim() === '/') {
     return '/';
   }
@@ -20,22 +20,30 @@ export function hasSupabaseConfig(): boolean {
   return Boolean(appEnv.supabaseUrl && appEnv.supabaseAnonKey);
 }
 
-export function toAppPath(path = ''): string {
+export function buildAppPath(basePath: string, path = ''): string {
   const trimmed = path.replace(/^\/+/, '');
 
   if (!trimmed) {
-    return appEnv.appBasePath;
+    return basePath;
   }
 
-  if (appEnv.appBasePath === '/') {
+  if (basePath === '/') {
     return `/${trimmed}`;
   }
 
-  return `${appEnv.appBasePath}${trimmed}`;
+  return `${basePath}${trimmed}`;
+}
+
+export function toAppPath(path = ''): string {
+  return buildAppPath(appEnv.appBasePath, path);
+}
+
+export function buildAppUrl(origin: string, basePath: string, path = ''): string {
+  return new URL(buildAppPath(basePath, path), origin).toString();
 }
 
 export function toAppUrl(path = ''): string {
-  return new URL(toAppPath(path), window.location.origin).toString();
+  return buildAppUrl(window.location.origin, appEnv.appBasePath, path);
 }
 
 export function getEdgeFunctionUrl(functionName: string): string {
