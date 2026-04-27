@@ -3,7 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { getEdgeFunctionUrl } from '../../../lib/config/env';
 import { trainingPlanPayloadSchema, type TrainingPlanPayload } from '../../../types/training-plan';
 
-const SESSION_EXPIRED_MESSAGE = 'Your session has expired. Sign in again to continue.';
+export const SESSION_EXPIRED_MESSAGE = 'Your session has expired. Sign in again to continue.';
 
 export async function getMyPlan(session: Session): Promise<TrainingPlanPayload | null> {
   const response = await fetch(getEdgeFunctionUrl('get-my-plan'), {

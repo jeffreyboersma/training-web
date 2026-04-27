@@ -1,8 +1,9 @@
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { StatePanel } from '../../../app/components/StatePanel';
 import { useAuthSession } from '../../auth/hooks/useAuthSession';
+import { SESSION_EXPIRED_MESSAGE } from '../api/getMyPlan';
 import { PlanOverview } from '../components/PlanOverview';
 import { SessionDialog } from '../components/SessionDialog';
 import { TrainingCalendar } from '../components/TrainingCalendar';
@@ -10,6 +11,7 @@ import { useTrainingPlan } from '../hooks/useTrainingPlan';
 import { findAnchorWeek, findNextEvent, listUpcomingSessions, type SessionSelection } from '../lib/plan-derived';
 
 export function PlanPage() {
+  const navigate = useNavigate();
   const { session, signOut } = useAuthSession();
   const { data, error, loading, refresh } = useTrainingPlan();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,6 +22,7 @@ export function PlanPage() {
   const nextEvent = useMemo(() => (data ? findNextEvent(data.plan.events) : null), [data]);
   const anchorWeek = useMemo(() => (data ? findAnchorWeek(data.weeklyPlans) : null), [data]);
   const upcomingSessions = useMemo(() => (data ? listUpcomingSessions(data.weeklyPlans) : []), [data]);
+  const sessionExpired = error === SESSION_EXPIRED_MESSAGE;
   const userEmail = session?.user.email ?? '';
   const userInitial = userEmail.trim().charAt(0).toUpperCase() || data?.plan.athlete.trim().charAt(0).toUpperCase() || 'U';
 
@@ -51,6 +54,14 @@ export function PlanPage() {
     };
   }, [userMenuOpen]);
 
+  async function handleSignBackIn() {
+    try {
+      await signOut();
+    } finally {
+      navigate('/login', { replace: true });
+    }
+  }
+
   if (loading) {
     return (
       <main className="page-shell">
@@ -72,9 +83,16 @@ export function PlanPage() {
           title="We couldn&apos;t load your plan"
           tone="error"
           actions={
-            <button className="primary-button" type="button" onClick={refresh}>
-              Try again
-            </button>
+            <>
+              <button className="primary-button" type="button" onClick={refresh}>
+                Try again
+              </button>
+              {sessionExpired ? (
+                <button className="secondary-button" type="button" onClick={() => void handleSignBackIn()}>
+                  Sign back in
+                </button>
+              ) : null}
+            </>
           }
         />
       </main>

@@ -64,7 +64,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const { error } = await supabase.auth.signOut();
+    setSession(null);
+    setLoading(false);
+
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
 
     if (error) {
       throw error;
