@@ -145,8 +145,8 @@ export function PlanPage() {
           <div className="page-brand">
             <span className="brand-mark brand-mark--compact" aria-hidden="true" />
             <div className="page-brand-copy">
+              <h1 className="page-app-title">Tränare</h1>
               <p className="site-kicker">Personal training</p>
-              <h1 className="page-app-title">Training App</h1>
             </div>
           </div>
         </div>
