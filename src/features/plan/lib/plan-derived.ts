@@ -94,7 +94,7 @@ export function listUpcomingSessions(weeklyPlans: TrainingWeek[], todayIso = get
         })),
       ),
     )
-    .filter(({ day }) => comparePlanDates(day.date, todayIso) >= 0)
+    .filter(({ day }) => comparePlanDates(day.date, todayIso) > 0)
     .slice(0, limit);
 }
 

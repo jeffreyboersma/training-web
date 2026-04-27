@@ -78,6 +78,38 @@ describe('plan-derived helpers', () => {
     expect(getWeekSessionCount(weeklyPlans[0]!)).toBe(1);
   });
 
+  it('excludes current-day sessions from the upcoming list', () => {
+    const todaySessionWeek: TrainingWeek[] = [
+      {
+        ...weeklyPlans[1]!,
+        days: [
+          {
+            date: '2026-04-20',
+            sessions: [
+              { details: 'Steady ride', duration: '60 min', intensity: 'Z2', label: 'Today Ride', purpose: 'Aerobic work', sport: 'T', summary: 'Ride steady', type: 'bike' },
+            ],
+          },
+          {
+            date: '2026-04-21',
+            sessions: [
+              { details: 'Easy jog', duration: '30 min', intensity: 'Z2', label: 'Tomorrow Run', purpose: 'Consistency', sport: 'T', summary: 'Run easy', type: 'run' },
+            ],
+          },
+          { date: '2026-04-22', sessions: [] },
+          { date: '2026-04-23', sessions: [] },
+          { date: '2026-04-24', sessions: [] },
+          { date: '2026-04-25', sessions: [] },
+          { date: '2026-04-26', sessions: [] },
+        ],
+      },
+    ];
+
+    const upcoming = listUpcomingSessions(todaySessionWeek, '2026-04-20', 4);
+
+    expect(upcoming).toHaveLength(1);
+    expect(upcoming[0]?.session.label).toBe('Tomorrow Run');
+  });
+
   it('computes day deltas for athlete countdowns', () => {
     expect(getDaysUntil('2026-08-16', '2026-08-10')).toBe(6);
   });
