@@ -1,13 +1,11 @@
 import type { TrainingPlanPayload } from '../../../types/training-plan';
 import { RichTextContent } from './RichTextContent';
 import {
-  formatDayLabel,
   formatFullDate,
   getDaysUntil,
   getSessionAccent,
+  getTodayIso,
   getWeekDaysMondayToSunday,
-  getWeekRangeLabel,
-  getWeekSessionCount,
   type PlanEvent,
   type SessionSelection,
   type TrainingWeek,
@@ -22,66 +20,71 @@ type PlanOverviewProps = {
   upcomingSessions: SessionSelection[];
 };
 
+function formatPhaseWeeksLabel(weeks: string): string {
+  const weekNumbers = weeks.split(/\D+/).filter(Boolean);
+  const [startWeek, endWeek] = weekNumbers;
+
+  if (!startWeek) {
+    return `Week ${weeks}`;
+  }
+
+  if (!endWeek || startWeek === endWeek) {
+    return `Week ${startWeek}`;
+  }
+
+  return `Weeks ${startWeek}-${endWeek}`;
+}
+
 export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onShowCalendar, upcomingSessions }: PlanOverviewProps) {
   const daysUntilNextEvent = nextEvent ? getDaysUntil(nextEvent.date) : null;
-  const anchorWeekDays = getWeekDaysMondayToSunday(anchorWeek);
+  const todayIso = getTodayIso();
+  const todayWeek = data.weeklyPlans.find((week) => week.days.some((day) => day.date === todayIso)) ?? null;
+  const todayDay = todayWeek ? getWeekDaysMondayToSunday(todayWeek).find((day) => day.date === todayIso) ?? null : null;
 
   return (
     <div className="overview-grid" id="overview-panel" role="tabpanel" aria-labelledby="view-tab-overview">
       <div className="overview-primary stack-grid">
-        <section className="panel-card anchor-week-card">
+        <section className="panel-card">
           <div className="section-heading section-heading--split">
             <div>
-              <p className="eyebrow">This week</p>
-              <h3>
-                Week {anchorWeek.week} • {anchorWeek.phase}
-              </h3>
-              <p className="muted-copy">
-                {getWeekRangeLabel(anchorWeek)} • {anchorWeek.totalHours} planned hours • {getWeekSessionCount(anchorWeek)} sessions
-              </p>
+              <p className="eyebrow">Today</p>
+              <h3>{formatFullDate(todayIso)}</h3>
+              <p className="muted-copy">{todayWeek ? `Week ${todayWeek.week} • ${todayWeek.phase}` : 'Outside the loaded plan range'}</p>
             </div>
             <button className="secondary-button" type="button" onClick={onShowCalendar}>
               Open full calendar
             </button>
           </div>
 
-          <p className="feature-copy">{anchorWeek.focus}</p>
-
-          <div className="anchor-week-grid">
-            {anchorWeekDays.map((day) => (
-              <article className="week-focus-day" key={day.date}>
-                <div className="day-summary-header">
-                  <strong>{formatDayLabel(day.date)}</strong>
-                  <span>{day.sessions.length ? `${day.sessions.length} session${day.sessions.length === 1 ? '' : 's'}` : 'Recovery'}</span>
-                </div>
-
-                {day.sessions.length ? (
-                  <div className="session-list">
-                    {day.sessions.map((session) => (
-                      <button
-                        key={`${day.date}-${session.label}-${session.duration}`}
-                        className="session-inline-card"
-                        type="button"
-                        style={{ '--session-accent': getSessionAccent(session.type) } as React.CSSProperties}
-                        onClick={() => onSelectSession({ day, session, week: anchorWeek })}
-                      >
-                        <strong>{session.label}</strong>
-                        <span className="session-button-meta">
-                          {session.duration} • {session.intensity}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="rest-note">Recovery day</p>
-                )}
-              </article>
-            ))}
-          </div>
-
+          {todayDay?.sessions.length ? (
+            <div className="session-list">
+              {todayDay.sessions.map((session) => (
+                <button
+                  key={`${todayDay.date}-${session.label}-${session.duration}`}
+                  className="session-inline-card"
+                  type="button"
+                  style={{ '--session-accent': getSessionAccent(session.type) } as React.CSSProperties}
+                  onClick={() => onSelectSession({ day: todayDay, session, week: todayWeek ?? anchorWeek })}
+                >
+                  <strong>{session.label}</strong>
+                  <span className="session-button-meta">
+                    {session.duration} • {session.intensity}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="rest-note">No planned sessions today.</p>
+          )}
+          {anchorWeek.focus ? (
+            <aside className="focus-note">
+              <p className="eyebrow">Week {anchorWeek.week} Focus</p>
+              <RichTextContent content={anchorWeek.focus} />
+            </aside>
+          ) : null}
           {anchorWeek.coachingNotes ? (
             <aside className="coach-note">
-              <p className="eyebrow">Coach note</p>
+              <p className="eyebrow">Week {anchorWeek.week} Coach note</p>
               <RichTextContent content={anchorWeek.coachingNotes} />
             </aside>
           ) : null}
@@ -114,7 +117,21 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
             <p className="muted-copy">There are no upcoming sessions in the loaded plan range.</p>
           )}
         </section>
-
+        
+        <section className="panel-card">
+          <div className="section-heading">
+            <p className="eyebrow">Key</p>
+            <h3>Session types</h3>
+          </div>
+          <div className="legend-list">
+            {data.legend.map((entry) => (
+              <span key={`${entry.type}-${entry.label}`} className="legend-chip" style={{ '--session-accent': getSessionAccent(entry.type) } as React.CSSProperties}>
+                {entry.label}
+              </span>
+            ))}
+          </div>
+        </section>
+        
         <section className="panel-card">
           <div className="section-heading">
             <p className="eyebrow">Targets</p>
@@ -145,13 +162,15 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
             <div className="phase-track">
               {data.phases.map((phase) => (
                 <article className="phase-card" key={`${phase.name}-${phase.startDate}`}>
-                  <span className="phase-badge">{phase.name}</span>
-                  <h4>{phase.weeks}</h4>
+                  <div className="phase-card-header">
+                    <div className="eyebrow">{formatPhaseWeeksLabel(phase.weeks)}</div>
+                    <span className="phase-badge">{phase.name}</span>
+                  </div>
                   <p className="muted-copy">
                     {phase.startDate} to {phase.endDate}
                   </p>
                   <p>{phase.focus}</p>
-                  <strong>{phase.weeklyHours}</strong>
+                  <div className="eyebrow phase-hours">{phase.weeklyHours} hours per week</div>
                 </article>
               ))}
             </div>
@@ -163,17 +182,19 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
         <section className="panel-card">
           <div className="section-heading">
             <p className="eyebrow">On deck</p>
-            <h3>Small wins this week</h3>
+            <h4>Small wins this week</h4>
           </div>
-          {data.actionItems.length ? (
-            <ul className="text-list action-list">
-              {data.actionItems.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted-copy">No extra setup items are attached to this plan.</p>
-          )}
+          <div className="content">
+            {data.actionItems.length ? (
+              <ul className="text-list action-list">
+                {data.actionItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="muted-copy">No extra setup items are attached to this plan.</p>
+            )}
+          </div>
         </section>
 
         <section className="panel-card">
@@ -181,12 +202,14 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
             <p className="eyebrow">Guidance</p>
             <h3>Strength and race notes</h3>
           </div>
-          {data.strengthApproach ? <RichTextContent content={data.strengthApproach} /> : null}
-          <div className="stack-grid">
+          <div className="stack-grid content">
+            {data.strengthApproach ? <RichTextContent content={data.strengthApproach} /> : null}
             {data.raceStrategy.map((entry) => (
               <article className="info-card" key={entry.title}>
                 <strong>{entry.title}</strong>
-                <RichTextContent content={entry.content} />
+                <div className="muted-copy">
+                  <RichTextContent content={entry.content} />
+                </div>
               </article>
             ))}
           </div>
@@ -201,7 +224,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
             {data.zones.map((zone) => (
               <article className="zone-card" key={zone.title}>
                 <strong>{zone.title}</strong>
-                <div className="table-scroll">
+                <div className="table-scroll content">
                   <table>
                     <thead>
                       <tr>
@@ -222,20 +245,6 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
                   </table>
                 </div>
               </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="panel-card">
-          <div className="section-heading">
-            <p className="eyebrow">Key</p>
-            <h3>Session types</h3>
-          </div>
-          <div className="legend-list">
-            {data.legend.map((entry) => (
-              <span key={`${entry.type}-${entry.label}`} className="legend-chip" style={{ '--session-accent': getSessionAccent(entry.type) } as React.CSSProperties}>
-                {entry.label}
-              </span>
             ))}
           </div>
         </section>
