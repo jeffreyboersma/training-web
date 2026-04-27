@@ -35,7 +35,7 @@ function formatPhaseWeeksLabel(weeks: string): string {
   return `Weeks ${startWeek}-${endWeek}`;
 }
 
-export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onShowCalendar, upcomingSessions }: PlanOverviewProps) {
+export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, upcomingSessions }: PlanOverviewProps) {
   const daysUntilNextEvent = nextEvent ? getDaysUntil(nextEvent.date) : null;
   const todayIso = getTodayIso();
   const todayWeek = data.weeklyPlans.find((week) => week.days.some((day) => day.date === todayIso)) ?? null;
@@ -47,14 +47,18 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
         <section className="panel-card">
           <div className="section-heading section-heading--split">
             <div>
-              <p className="eyebrow">Today</p>
+              {todayWeek ? (
+                <p className="eyebrow">Today • Week {todayWeek.week}</p>
+              ) : <p className="eyebrow">Today</p>}
               <h3>{formatFullDate(todayIso)}</h3>
-              <p className="muted-copy">{todayWeek ? `Week ${todayWeek.week} • ${todayWeek.phase}` : 'Outside the loaded plan range'}</p>
             </div>
-            <button className="secondary-button" type="button" onClick={onShowCalendar}>
-              Open full calendar
-            </button>
+            {todayWeek ? (
+              <div className="today-heading-meta">
+                <span className="phase-badge">{todayWeek.phase}</span>
+              </div>
+            ) : null}
           </div>
+          {todayWeek ? null : <p className="muted-copy">Outside the loaded plan range</p>}
 
           {todayDay?.sessions.length ? (
             <div className="session-list">

@@ -666,6 +666,17 @@ th {
   align-items: start;
 }
 
+.section-heading--split p {
+  margin-bottom: 0.3rem;
+}
+
+.today-heading-meta {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: end;
+  text-align: right;
+}
+
 .anchor-week-grid,
 .event-grid,
 .phase-track {
