@@ -5,6 +5,7 @@ import {
   formatFullDate,
   getDaysUntil,
   getSessionAccent,
+  getWeekDaysMondayToSunday,
   getWeekRangeLabel,
   getWeekSessionCount,
   type PlanEvent,
@@ -23,6 +24,7 @@ type PlanOverviewProps = {
 
 export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onShowCalendar, upcomingSessions }: PlanOverviewProps) {
   const daysUntilNextEvent = nextEvent ? getDaysUntil(nextEvent.date) : null;
+  const anchorWeekDays = getWeekDaysMondayToSunday(anchorWeek);
 
   return (
     <div className="overview-grid" id="overview-panel" role="tabpanel" aria-labelledby="view-tab-overview">
@@ -46,7 +48,7 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, onS
           <p className="feature-copy">{anchorWeek.focus}</p>
 
           <div className="anchor-week-grid">
-            {anchorWeek.days.map((day) => (
+            {anchorWeekDays.map((day) => (
               <article className="week-focus-day" key={day.date}>
                 <div className="day-summary-header">
                   <strong>{formatDayLabel(day.date)}</strong>

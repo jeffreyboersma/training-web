@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-import { formatDayLabel, getSessionAccent, getWeekRangeLabel, type SessionSelection, type TrainingWeek } from '../lib/plan-derived';
+import {
+  formatDayLabel,
+  getSessionAccent,
+  getWeekDaysMondayToSunday,
+  getWeekRangeLabel,
+  type SessionSelection,
+  type TrainingWeek,
+} from '../lib/plan-derived';
 
 type TrainingCalendarProps = {
   anchorWeekNumber: number;
@@ -38,6 +45,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
       <div className="calendar-stack">
         {weeklyPlans.map((week) => {
           const isExpanded = expandedWeeks.has(week.week);
+          const weekDays = getWeekDaysMondayToSunday(week);
 
           return (
           <section
@@ -72,7 +80,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
             {isExpanded ? (
               <div className="calendar-week-content" id={`week-${week.week}-content`}>
                 <div className="calendar-grid">
-                  {week.days.map((day) => (
+                  {weekDays.map((day) => (
                     <article className="calendar-day" key={day.date}>
                       <div className="calendar-day-header">
                         <strong>{formatDayLabel(day.date)}</strong>

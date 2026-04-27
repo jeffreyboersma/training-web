@@ -13,12 +13,14 @@ export type SessionSelection = {
 const dayFormatter = new Intl.DateTimeFormat('en-CA', {
   day: 'numeric',
   month: 'short',
+  timeZone: 'UTC',
   weekday: 'short',
 });
 
 const fullDateFormatter = new Intl.DateTimeFormat('en-CA', {
   day: 'numeric',
   month: 'long',
+  timeZone: 'UTC',
   weekday: 'long',
   year: 'numeric',
 });
@@ -26,10 +28,11 @@ const fullDateFormatter = new Intl.DateTimeFormat('en-CA', {
 const monthDayFormatter = new Intl.DateTimeFormat('en-CA', {
   day: 'numeric',
   month: 'short',
+  timeZone: 'UTC',
 });
 
 export function getTodayIso(now = new Date()) {
-  return now.toISOString().slice(0, 10);
+  return `${now.getFullYear()}-${padDatePart(now.getMonth() + 1)}-${padDatePart(now.getDate())}`;
 }
 
 export function comparePlanDates(left: string, right: string) {
@@ -54,13 +57,20 @@ export function findNextEvent(events: PlanEvent[], todayIso = getTodayIso()) {
 
 export function findAnchorWeek(weeklyPlans: TrainingWeek[], todayIso = getTodayIso()) {
   return (
-    weeklyPlans.find((week) => week.days.some((day) => comparePlanDates(day.date, todayIso) >= 0)) ?? weeklyPlans[0] ?? null
+    weeklyPlans.find((week) => getWeekDaysMondayToSunday(week).some((day) => comparePlanDates(day.date, todayIso) >= 0)) ??
+    weeklyPlans[0] ??
+    null
   );
 }
 
+export function getWeekDaysMondayToSunday(week: TrainingWeek) {
+  return [...week.days].sort((left, right) => comparePlanDates(left.date, right.date));
+}
+
 export function getWeekRangeLabel(week: TrainingWeek) {
-  const firstDay = week.days[0];
-  const lastDay = week.days[week.days.length - 1];
+  const orderedDays = getWeekDaysMondayToSunday(week);
+  const firstDay = orderedDays[0];
+  const lastDay = orderedDays[orderedDays.length - 1];
 
   if (!firstDay || !lastDay) {
     return week.startDate;
@@ -70,13 +80,13 @@ export function getWeekRangeLabel(week: TrainingWeek) {
 }
 
 export function getWeekSessionCount(week: TrainingWeek) {
-  return week.days.reduce((count, day) => count + day.sessions.length, 0);
+  return getWeekDaysMondayToSunday(week).reduce((count, day) => count + day.sessions.length, 0);
 }
 
 export function listUpcomingSessions(weeklyPlans: TrainingWeek[], todayIso = getTodayIso(), limit = 6) {
   return weeklyPlans
     .flatMap((week) =>
-      week.days.flatMap((day) =>
+      getWeekDaysMondayToSunday(week).flatMap((day) =>
         day.sessions.map((session) => ({
           day,
           session,
@@ -130,4 +140,8 @@ function parsePlanDate(date: string) {
   }
 
   return new Date(Date.UTC(year, month - 1, day));
+}
+
+function padDatePart(value: number) {
+  return String(value).padStart(2, '0');
 }

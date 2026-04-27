@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import type { TrainingWeek } from './plan-derived';
-import { findAnchorWeek, findNextEvent, getDaysUntil, getWeekSessionCount, listUpcomingSessions } from './plan-derived';
+import {
+  findAnchorWeek,
+  findNextEvent,
+  getDaysUntil,
+  getTodayIso,
+  getWeekDaysMondayToSunday,
+  getWeekRangeLabel,
+  getWeekSessionCount,
+  listUpcomingSessions,
+} from './plan-derived';
 
 const weeklyPlans: TrainingWeek[] = [
   {
@@ -71,5 +80,35 @@ describe('plan-derived helpers', () => {
 
   it('computes day deltas for athlete countdowns', () => {
     expect(getDaysUntil('2026-08-16', '2026-08-10')).toBe(6);
+  });
+
+  it('uses the local calendar day when deriving today', () => {
+    expect(getTodayIso(new Date(2026, 3, 26, 23, 30))).toBe('2026-04-26');
+  });
+
+  it('normalizes week days into Monday through Sunday order', () => {
+    const shuffledWeek: TrainingWeek = {
+      ...weeklyPlans[0]!,
+      days: [
+        weeklyPlans[0]!.days[6]!,
+        weeklyPlans[0]!.days[2]!,
+        weeklyPlans[0]!.days[0]!,
+        weeklyPlans[0]!.days[4]!,
+        weeklyPlans[0]!.days[1]!,
+        weeklyPlans[0]!.days[5]!,
+        weeklyPlans[0]!.days[3]!,
+      ],
+    };
+
+    expect(getWeekDaysMondayToSunday(shuffledWeek).map((day) => day.date)).toEqual([
+      '2026-04-13',
+      '2026-04-14',
+      '2026-04-15',
+      '2026-04-16',
+      '2026-04-17',
+      '2026-04-18',
+      '2026-04-19',
+    ]);
+    expect(getWeekRangeLabel(shuffledWeek)).toBe('Apr 13 - Apr 19');
   });
 });
