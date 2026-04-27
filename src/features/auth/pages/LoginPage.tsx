@@ -19,6 +19,15 @@ export function LoginPage() {
   if (configured && loading) {
     return (
       <main className="page-shell auth-page">
+        <header className="auth-page-header">
+          <div className="page-brand">
+            <span className="brand-mark brand-mark--compact" aria-hidden="true" />
+            <div className="page-brand-copy">
+              <p className="site-kicker">Personal training</p>
+              <h1 className="page-app-title">Training App</h1>
+            </div>
+          </div>
+        </header>
         <StatePanel
           eyebrow="Signing you in"
           message="Restoring your access and preparing your training view."
@@ -49,6 +58,16 @@ export function LoginPage() {
 
   return (
     <main className="page-shell auth-page">
+      <header className="auth-page-header">
+        <div className="page-brand">
+          <span className="brand-mark brand-mark--compact" aria-hidden="true" />
+          <div className="page-brand-copy">
+            <p className="site-kicker">Personal training</p>
+            <h1 className="page-app-title">Training App</h1>
+          </div>
+        </div>
+      </header>
+
       <div className="auth-layout">
         <section className="panel-card auth-card">
           <p className="eyebrow">Welcome back</p>
