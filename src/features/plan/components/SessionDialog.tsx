@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { type CSSProperties, useEffect, useId, useRef } from 'react';
 
 import { RichTextContent } from './RichTextContent';
 import { formatFullDate, getSessionAccent, type SessionSelection } from '../lib/plan-derived';
@@ -50,29 +50,39 @@ export function SessionDialog({ onClose, selection }: SessionDialogProps) {
         aria-modal="true"
         className="session-dialog"
         role="dialog"
+        style={{ '--session-accent': getSessionAccent(session.type) } as CSSProperties}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="dialog-header">
-          <div>
+          <div className="dialog-title-block">
             <p className="eyebrow">Week {week.week} session</p>
             <h2 id={titleId}>{session.label}</h2>
-            <p className="muted-copy" id={descriptionId}>
+            <p className="muted-copy eyebrow" id={descriptionId}>
               {formatFullDate(day.date)} • {session.duration} • {session.type}
               {session.sport ? ` • ${session.sport}` : ''}
             </p>
           </div>
-          <button ref={closeButtonRef} className="dialog-close" type="button" onClick={onClose}>
-            Close
+          <button
+            ref={closeButtonRef}
+            aria-label="Close session dialog"
+            className="dialog-close"
+            type="button"
+            onClick={onClose}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M4 4L12 12" />
+              <path d="M12 4L4 12" />
+            </svg>
           </button>
         </div>
 
         <div className="dialog-body">
           <div className="dialog-meta">
-            <span className="session-chip" style={{ '--session-accent': getSessionAccent(session.type) } as React.CSSProperties}>
+            <span className="session-chip">
               {session.intensity}
             </span>
-            <span className="session-chip session-chip--muted">{week.phase}</span>
-            {week.recovery ? <span className="session-chip session-chip--muted">Recovery week</span> : null}
+            <span className="session-chip">{week.phase}</span>
+            {week.recovery ? <span className="session-chip--recovery">Recovery Week</span> : null}
           </div>
 
           <article className="dialog-panel">
@@ -91,10 +101,10 @@ export function SessionDialog({ onClose, selection }: SessionDialogProps) {
           </article>
 
           {week.coachingNotes ? (
-            <article className="dialog-panel">
-              <h3>Coach note</h3>
+            <aside className="coach-note">
+              <p className="eyebrow">Week {week.week} Coach note</p>
               <RichTextContent content={week.coachingNotes} />
-            </article>
+            </aside>
           ) : null}
         </div>
       </section>
