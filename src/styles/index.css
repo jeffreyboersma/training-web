@@ -867,19 +867,19 @@ th {
 .session-chip--recovery,
 .legend-chip,
 .phase-badge {
-  width: fit-content;
-  border-radius: 999px;
-  padding: 0.28rem 0.56rem;
-}
-
-.phase-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.28rem 0.56rem;
+  line-height: 1;
+}
+
+.phase-badge {
   align-self: start;
   justify-self: start;
   flex-shrink: 0;
-  line-height: 1;
   white-space: nowrap;
 }
 
