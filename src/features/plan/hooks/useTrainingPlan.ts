@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { TrainingPlanPayload } from '../../../types/training-plan';
 import { useAuthSession } from '../../auth/hooks/useAuthSession';
@@ -13,18 +13,26 @@ type TrainingPlanState = {
 export function useTrainingPlan() {
   const { configured, session } = useAuthSession();
   const [requestVersion, setRequestVersion] = useState(0);
+  const sessionRef = useRef(session);
   const [state, setState] = useState<TrainingPlanState>({
     data: null,
     error: null,
     loading: false,
   });
+  const sessionUserId = session?.user.id ?? null;
+
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
 
   useEffect(() => {
     if (!configured) {
       return;
     }
 
-    if (!session) {
+    const activeSession = sessionRef.current;
+
+    if (!sessionUserId || !activeSession) {
       return;
     }
 
@@ -36,7 +44,7 @@ export function useTrainingPlan() {
       }
     });
 
-    void getMyPlan(session)
+    void getMyPlan(activeSession)
       .then((data) => {
         if (cancelled) {
           return;
@@ -59,7 +67,7 @@ export function useTrainingPlan() {
     return () => {
       cancelled = true;
     };
-  }, [configured, requestVersion, session]);
+  }, [configured, requestVersion, sessionUserId]);
 
   return {
     data: configured && session ? state.data : null,

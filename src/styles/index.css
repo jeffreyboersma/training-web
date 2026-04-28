@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 :root {
+  --app-frame-max-width: 1440px;
+  --app-frame-inline-gutter: 1rem;
   --bg: #080809;
   --bg-elevated: #101012;
   --bg-panel: #141416;
@@ -21,13 +23,13 @@
   --danger: #ff6b6b;
   --shadow: 0 28px 64px rgba(0, 0, 0, 0.28);
   --activity-bike: #3dd9b5;
-  --activity-brick: #5da8ff;
-  --activity-hyrox: #ff6a3d;
-  --activity-race: #ffd166;
-  --activity-run: #bb86fc;
+  --activity-brick: #76c741;
+  --activity-hyrox: #ff8787;
+  --activity-race: var(--brand);
+  --activity-run: #dfd660;
   --activity-strength: #c4ccda;
   --activity-swim: #46c2ff;
-  --activity-default: #7ce3f4;
+  --activity-default: #c4ccda;
   font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -121,7 +123,7 @@ th {
 
 .app-frame {
   position: relative;
-  width: min(1440px, calc(100% - 2rem));
+  width: min(var(--app-frame-max-width), calc(100% - (var(--app-frame-inline-gutter) * 2)));
   margin: 0 auto;
   padding: 1rem 0 3rem;
 }
@@ -462,8 +464,9 @@ th {
 
 .user-menu-email {
   margin: 0;
-  color: var(--text-strong);
-  font-size: 0.92rem;
+  margin-left: 0.5rem;
+  color: var(--card-text-muted);
+  font-size: 0.75rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -483,6 +486,7 @@ th {
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
+  font-size: 0.86rem;
   transition: transform 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease;
 }
 
@@ -567,6 +571,7 @@ th {
   justify-content: start;
   gap: 0;
   align-items: stretch;
+  padding-inline: max(var(--app-frame-inline-gutter), calc((100dvw - var(--app-frame-max-width)) / 2));
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
   overflow-x: auto;
   scrollbar-width: none;
@@ -745,7 +750,8 @@ th {
 .session-button {
   width: 100%;
   text-align: left;
-  padding: 0.82rem 0.88rem 0.78rem;
+  position: relative;
+  padding: 0.82rem 0.82rem 0.82rem 1.64rem;
   background: color-mix(in srgb, var(--session-accent, var(--activity-default)) 11%, var(--bg-panel) 89%);
   border-color: color-mix(in srgb, var(--session-accent, var(--activity-default)) 30%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--session-accent, var(--activity-default)) 10%, rgba(255, 255, 255, 0.02));
@@ -754,17 +760,20 @@ th {
 .session-inline-card::before,
 .session-button::before {
   content: '';
-  width: 100%;
-  height: 1px;
+  position: absolute;
+  left: 0.76rem;
+  top: 0.72rem;
+  bottom: 0.72rem;
+  width: 0.2rem;
   border-radius: 999px;
   background: var(--session-accent, var(--activity-default));
 }
 
+.session-inline-date,
 .session-button-meta {
   font-size: 0.6rem;
 }
 
-.session-inline-date,
 .session-button-summary,
 .event-priority,
 .week-stat,
@@ -1258,8 +1267,12 @@ th {
 }
 
 @media (max-width: 760px) {
+  :root {
+    --app-frame-inline-gutter: 0.5rem;
+  }
+
   .app-frame {
-    width: min(100%, calc(100% - 1rem));
+    width: min(100%, calc(100% - (var(--app-frame-inline-gutter) * 2)));
     padding: 0.75rem 0 2rem;
   }
 
@@ -1310,5 +1323,15 @@ th {
 
   .session-dialog .dialog-header {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .plan-shell > .toolbar-card {
+    width: calc(100% + (var(--app-frame-inline-gutter) * 2));
+    margin-inline: calc(var(--app-frame-inline-gutter) * -1);
+    border-inline: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 }

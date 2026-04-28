@@ -1,6 +1,7 @@
 import type { TrainingPlanPayload } from '../../../types/training-plan';
 import { RichTextContent } from './RichTextContent';
 import {
+  formatDayLabel,
   formatFullDate,
   getDaysUntil,
   getSessionAccent,
@@ -109,10 +110,9 @@ export function PlanOverview({ anchorWeek, data, nextEvent, onSelectSession, upc
                   style={{ '--session-accent': getSessionAccent(selection.session.type) } as React.CSSProperties}
                   onClick={() => onSelectSession(selection)}
                 >
-                  <span className="session-inline-date">{formatFullDate(selection.day.date)}</span>
                   <strong>{selection.session.label}</strong>
                   <span className="session-button-meta">
-                    {selection.session.duration} • {selection.session.intensity}
+                    {formatDayLabel(selection.day.date)} • {selection.session.duration}
                   </span>
                 </button>
               ))}
