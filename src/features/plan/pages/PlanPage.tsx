@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import { startTransition, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { StatePanel } from '../../../app/components/StatePanel';
@@ -10,14 +10,18 @@ import { TrainingCalendar } from '../components/TrainingCalendar';
 import { useTrainingPlan } from '../hooks/useTrainingPlan';
 import { findAnchorWeek, findNextEvent, listUpcomingSessions, type SessionSelection } from '../lib/plan-derived';
 
+const MOBILE_MENU_ANIMATION_MS = 260;
+
 export function PlanPage() {
   const navigate = useNavigate();
   const { session, signOut } = useAuthSession();
   const { data, error, loading, refresh } = useTrainingPlan();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selection, setSelection] = useState<SessionSelection | null>(null);
+  const [mobileMenuState, setMobileMenuState] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const desktopUserMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
   const currentView = searchParams.get('view') === 'calendar' ? 'calendar' : 'overview';
   const nextEvent = useMemo(() => (data ? findNextEvent(data.plan.events) : null), [data]);
   const anchorWeek = useMemo(() => (data ? findAnchorWeek(data.weeklyPlans) : null), [data]);
@@ -25,6 +29,12 @@ export function PlanPage() {
   const sessionExpired = error === SESSION_EXPIRED_MESSAGE;
   const userEmail = session?.user.email ?? '';
   const userInitial = userEmail.trim().charAt(0).toUpperCase() || data?.plan.athlete.trim().charAt(0).toUpperCase() || 'U';
+  const mobileMenuVisible = mobileMenuState !== 'closed';
+  const mobileMenuExpanded = mobileMenuState === 'opening' || mobileMenuState === 'open';
+  const viewOptions = [
+    { key: 'overview' as const, label: 'Overview' },
+    { key: 'calendar' as const, label: 'Calendar' },
+  ];
 
   useEffect(() => {
     if (!userMenuOpen) {
@@ -32,27 +42,75 @@ export function PlanPage() {
     }
 
     function handlePointerDown(event: PointerEvent) {
-      if (userMenuRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      if (desktopUserMenuRef.current?.contains(target) || mobileUserMenuRef.current?.contains(target)) {
         return;
       }
 
       setUserMenuOpen(false);
     }
 
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setUserMenuOpen(false);
-      }
-    }
-
     window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [userMenuOpen]);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      closeMobileMenu();
+      setUserMenuOpen(false);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuVisible) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuVisible]);
+
+  useEffect(() => {
+    if (mobileMenuState === 'opening') {
+      const frameId = window.requestAnimationFrame(() => {
+        setMobileMenuState('open');
+      });
+
+      return () => {
+        window.cancelAnimationFrame(frameId);
+      };
+    }
+
+    if (mobileMenuState !== 'closing') {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setMobileMenuState('closed');
+    }, MOBILE_MENU_ANIMATION_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [mobileMenuState]);
 
   async function handleSignBackIn() {
     try {
@@ -124,6 +182,28 @@ export function PlanPage() {
     );
   }
 
+  const athleteName = data.plan.athlete;
+
+  function openMobileMenu() {
+    setMobileMenuState((current) => {
+      if (current === 'open' || current === 'opening') {
+        return current;
+      }
+
+      return 'opening';
+    });
+  }
+
+  function closeMobileMenu() {
+    setMobileMenuState((current) => {
+      if (current === 'closed' || current === 'closing') {
+        return current;
+      }
+
+      return 'closing';
+    });
+  }
+
   function handleViewChange(nextView: 'overview' | 'calendar') {
     startTransition(() => {
       const nextParams = new URLSearchParams(searchParams);
@@ -136,91 +216,154 @@ export function PlanPage() {
 
       setSearchParams(nextParams, { replace: true });
     });
+
+    closeMobileMenu();
+  }
+
+  function renderUserMenu(menuRef: RefObject<HTMLDivElement | null>) {
+    return (
+      <div className="user-menu" ref={menuRef}>
+        <button
+          aria-expanded={userMenuOpen}
+          aria-haspopup="menu"
+          aria-label={userEmail ? `Open user menu for ${userEmail}` : 'Open user menu'}
+          className="user-menu-trigger"
+          type="button"
+          onClick={() => setUserMenuOpen((current) => !current)}
+        >
+          {userInitial}
+        </button>
+
+        {userMenuOpen ? (
+          <div className="user-menu-panel" role="menu" aria-label="User menu">
+            <p className="user-menu-email">{userEmail || athleteName}</p>
+            <div className="user-menu-actions">
+              <button
+                className="user-menu-action"
+                role="menuitem"
+                type="button"
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  closeMobileMenu();
+                  refresh();
+                }}
+              >
+                Refresh plan
+              </button>
+              <button
+                className="user-menu-action user-menu-action--danger"
+                role="menuitem"
+                type="button"
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  closeMobileMenu();
+                  void signOut();
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
   }
 
   return (
     <main className="page-shell plan-shell">
-      <section className="page-topbar">
-        <div className="page-header-stack">
-          <div className="page-brand">
+      <div className="floating-navbar" data-mobile-menu-open={mobileMenuExpanded ? 'true' : 'false'}>
+        <section className="panel-card floating-navbar__bar" aria-label="Primary navigation">
+          <div className="page-brand floating-navbar__brand">
             <span className="brand-mark brand-mark--compact" aria-hidden="true" />
             <div className="page-brand-copy">
               <h1 className="page-app-title">Tränare</h1>
               <p className="site-kicker">Personal training</p>
             </div>
           </div>
-        </div>
 
-        <div className="user-menu" ref={userMenuRef}>
-          <button
-            aria-expanded={userMenuOpen}
-            aria-haspopup="menu"
-            aria-label={userEmail ? `Open user menu for ${userEmail}` : 'Open user menu'}
-            className="user-menu-trigger"
-            type="button"
-            onClick={() => setUserMenuOpen((current) => !current)}
+          <div className="floating-navbar__tabs" aria-label="Plan views">
+            {viewOptions.map((viewOption) => (
+              <button
+                key={viewOption.key}
+                aria-pressed={currentView === viewOption.key}
+                className={`floating-nav-button${currentView === viewOption.key ? ' floating-nav-button--active' : ''}`}
+                type="button"
+                onClick={() => handleViewChange(viewOption.key)}
+              >
+                {viewOption.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="floating-navbar__actions">
+            <button
+              aria-expanded={mobileMenuExpanded}
+              aria-haspopup="dialog"
+              aria-label="Open navigation menu"
+              className="floating-navbar__menu-toggle"
+              type="button"
+              onClick={() => {
+                openMobileMenu();
+                setUserMenuOpen(false);
+              }}
+            >
+              <span className="floating-navbar__menu-line" aria-hidden="true" />
+              <span className="floating-navbar__menu-line" aria-hidden="true" />
+              <span className="floating-navbar__menu-line" aria-hidden="true" />
+            </button>
+
+            <div className="floating-navbar__user-menu">{renderUserMenu(desktopUserMenuRef)}</div>
+          </div>
+        </section>
+
+        {mobileMenuVisible ? (
+          <section
+            className="floating-navbar__mobile-menu"
+            data-state={mobileMenuState}
+            role="dialog"
+            aria-label="Navigation menu"
+            aria-modal="true"
           >
-            {userInitial}
-          </button>
-
-          {userMenuOpen ? (
-            <div className="user-menu-panel" role="menu" aria-label="User menu">
-              <p className="user-menu-email">{userEmail || data.plan.athlete}</p>
-              <div className="user-menu-actions">
-                <button
-                  className="user-menu-action"
-                  role="menuitem"
-                  type="button"
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    refresh();
-                  }}
-                >
-                  Refresh plan
-                </button>
-                <button
-                  className="user-menu-action user-menu-action--danger"
-                  role="menuitem"
-                  type="button"
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    void signOut();
-                  }}
-                >
-                  Sign out
-                </button>
+            <div className="floating-navbar__mobile-header">
+              <div className="page-brand floating-navbar__brand">
+                <span className="brand-mark brand-mark--compact" aria-hidden="true" />
+                <div className="page-brand-copy">
+                  <h1 className="page-app-title">Tränare</h1>
+                  <p className="site-kicker">Personal training</p>
+                </div>
               </div>
-            </div>
-          ) : null}
-        </div>
-      </section>
 
-      <section className="panel-card toolbar-card">
-        <div className="toolbar-tabs" role="tablist" aria-label="Plan views">
-          <button
-            id="view-tab-overview"
-            aria-controls="overview-panel"
-            aria-selected={currentView === 'overview'}
-            className={`view-tab${currentView === 'overview' ? ' view-tab--active' : ''}`}
-            role="tab"
-            type="button"
-            onClick={() => handleViewChange('overview')}
-          >
-            Overview
-          </button>
-          <button
-            id="view-tab-calendar"
-            aria-controls="calendar-panel"
-            aria-selected={currentView === 'calendar'}
-            className={`view-tab${currentView === 'calendar' ? ' view-tab--active' : ''}`}
-            role="tab"
-            type="button"
-            onClick={() => handleViewChange('calendar')}
-          >
-            Calendar
-          </button>
-        </div>
-      </section>
+              <button
+                aria-label="Close navigation menu"
+                className="floating-navbar__close-toggle"
+                type="button"
+                onClick={() => {
+                  closeMobileMenu();
+                  setUserMenuOpen(false);
+                }}
+              >
+                <span aria-hidden="true">X</span>
+              </button>
+            </div>
+
+            <div className="floating-navbar__mobile-links" aria-label="Plan views">
+              {viewOptions.map((viewOption) => (
+                <button
+                  key={viewOption.key}
+                  aria-pressed={currentView === viewOption.key}
+                  className={`floating-nav-button floating-nav-button--stacked${currentView === viewOption.key ? ' floating-nav-button--active' : ''}`}
+                  type="button"
+                  onClick={() => handleViewChange(viewOption.key)}
+                >
+                  {viewOption.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="floating-navbar__mobile-footer">{renderUserMenu(mobileUserMenuRef)}</div>
+          </section>
+        ) : null}
+      </div>
 
       {currentView === 'calendar' ? (
         <TrainingCalendar

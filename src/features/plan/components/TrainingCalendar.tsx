@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import {
-  formatFullDate,
   getSessionAccent,
   getTodayIso,
   getWeekDaysMondayToSunday,
