@@ -278,7 +278,7 @@ export function PlanPage() {
   return (
     <main className="page-shell plan-shell">
       <div className="floating-navbar" data-mobile-menu-open={mobileMenuExpanded ? 'true' : 'false'}>
-        <section className="panel-card floating-navbar__bar" aria-label="Primary navigation">
+        <section className="floating-navbar__bar" aria-label="Primary navigation">
           <div className="page-brand floating-navbar__brand">
             <span className="brand-mark brand-mark--compact" aria-hidden="true" />
             <div className="page-brand-copy">
