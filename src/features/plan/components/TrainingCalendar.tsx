@@ -2,7 +2,6 @@ import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import {
   formatFullDate,
-  formatDayLabel,
   getSessionAccent,
   getTodayIso,
   getWeekDaysMondayToSunday,
@@ -25,6 +24,35 @@ type CalendarDayItem = {
   isWeekStart: boolean;
   week: TrainingWeek;
 };
+
+const dividerDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+  weekday: 'short',
+});
+
+function formatDividerDate(date: string) {
+  return dividerDateFormatter.format(new Date(`${date}T00:00:00Z`)).replace(',', '').toUpperCase();
+}
+
+function getWeekTooltip(week: TrainingWeek) {
+  const parts = [getWeekRangeLabel(week)];
+
+  if (week.focus) {
+    parts.push(week.focus);
+  }
+
+  if (week.coachingNotes) {
+    parts.push(`Coach note: ${week.coachingNotes}`);
+  }
+
+  if (week.recovery) {
+    parts.push('Recovery week');
+  }
+
+  return parts.join(' • ');
+}
 
 export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlans }: TrainingCalendarProps) {
   const todayIso = getTodayIso();
@@ -93,41 +121,42 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
             {entry.isWeekStart ? (
               <div className={`calendar-week-marker${entry.isAnchorWeekStart ? ' calendar-week-marker--anchor' : ''}`}>
                 <div className="calendar-week-marker-copy">
-                  <div className="calendar-week-marker-heading">
-                    <p className="eyebrow">Week {entry.week.week}</p>
-                    <h4>{entry.week.phase}</h4>
-                    <p className="muted-copy">{getWeekRangeLabel(entry.week)}</p>
-                  </div>
-
-                  {entry.week.focus ? <p className="calendar-week-summary">{entry.week.focus}</p> : null}
-                  {entry.week.coachingNotes ? <p className="calendar-week-note">{entry.week.coachingNotes}</p> : null}
+                  <p className="calendar-week-label">WEEK {entry.week.week} • {entry.week.phase}</p>
+                  <span
+                    aria-label={`Week ${entry.week.week} details: ${getWeekTooltip(entry.week)}`}
+                    className="calendar-week-info"
+                    data-tooltip={getWeekTooltip(entry.week)}
+                    tabIndex={0}
+                  >
+                    i
+                  </span>
                 </div>
 
                 <div className="calendar-header-meta">
                   <span className="week-stat">{entry.week.totalHours} hours</span>
-                  {entry.week.recovery ? <span className="week-stat week-stat--recovery">Recovery</span> : null}
                 </div>
               </div>
             ) : null}
 
             <article
               aria-current={entry.isToday ? 'date' : undefined}
-              className={`calendar-day timeline-day${entry.isPlanStart ? ' timeline-day--start' : ''}${entry.isToday ? ' timeline-day--today' : ''}`}
+              className={`timeline-day${entry.isPlanStart ? ' timeline-day--start' : ''}${entry.isToday ? ' timeline-day--today' : ''}`}
               ref={(node) => {
                 dayRefs.current[entry.day.date] = node;
               }}
             >
-              <div className="calendar-day-header">
-                <div className="timeline-day-date">
-                  <h4>{formatDayLabel(entry.day.date)}</h4>
-                  <p className="muted-copy">{formatFullDate(entry.day.date)}</p>
+              <div className="timeline-day-divider">
+                <div className="timeline-day-divider-copy">
+                  <span className="timeline-day-date">{formatDividerDate(entry.day.date)}</span>
+
+                  <div className="timeline-day-flags">
+                    {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
+                    {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">Today</span> : null}
+                    <span className="timeline-session-count">{entry.day.sessions.length ? `${entry.day.sessions.length} planned` : 'Rest day'}</span>
+                  </div>
                 </div>
 
-                <div className="timeline-day-flags">
-                  {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
-                  {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">Today</span> : null}
-                  <span className="timeline-session-count">{entry.day.sessions.length ? `${entry.day.sessions.length} planned` : 'Rest day'}</span>
-                </div>
+                <span aria-hidden="true" className="timeline-day-rule" />
               </div>
 
               {entry.day.sessions.length ? (
