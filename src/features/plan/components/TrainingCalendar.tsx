@@ -149,12 +149,13 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
 
                   <div className="timeline-day-flags">
                     {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
-                    {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">Today</span> : null}
                     <span className="timeline-session-count">{entry.day.sessions.length ? `${entry.day.sessions.length} planned` : 'Rest day'}</span>
                   </div>
                 </div>
 
                 <span aria-hidden="true" className="timeline-day-rule" />
+                                    {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">TODAY</span> : null}
+
               </div>
 
               {entry.day.sessions.length ? (
