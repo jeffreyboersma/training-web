@@ -37,7 +37,7 @@ function formatDividerDate(date: string) {
 }
 
 function getWeekTooltip(week: TrainingWeek) {
-  const parts = [getWeekRangeLabel(week)];
+  const parts = [getWeekRangeLabel(week), `${week.totalHours} hours`];
 
   if (week.focus) {
     parts.push(week.focus);
@@ -132,9 +132,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                   </span>
                 </div>
 
-                <div className="calendar-header-meta">
-                  <span className="week-stat">{entry.week.totalHours} hours</span>
-                </div>
+                <span aria-hidden="true" className="calendar-week-marker-rule" />
               </div>
             ) : null}
 
@@ -183,7 +181,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                   ))}
                 </div>
               ) : (
-                <p className="rest-note">No planned sessions.</p>
+                <p className="rest-note calendar-rest-state">No planned sessions.</p>
               )}
             </article>
           </Fragment>

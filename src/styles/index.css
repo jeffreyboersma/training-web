@@ -954,22 +954,29 @@ th {
 
 .calendar-week-marker {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0.9rem;
   align-items: center;
-  padding: 0.1rem 0 0.2rem 0.95rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.calendar-week-marker--anchor {
-  border-left-color: rgba(255, 122, 26, 0.4);
+  padding: 0.1rem 0 0.2rem;
 }
 
 .calendar-week-marker-copy {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex: 0 0 auto;
   min-width: 0;
+}
+
+.calendar-week-marker-rule {
+  flex: 1 1 auto;
+  min-width: 2rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--brand) 55%, transparent);
+}
+
+.calendar-week-marker--anchor .calendar-week-marker-rule {
+  background: var(--brand);
 }
 
 .calendar-week-label {
@@ -986,12 +993,13 @@ th {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.15rem;
-  height: 1.15rem;
-  border: 1px solid var(--line);
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--brand) 72%, transparent);
   border-radius: 999px;
-  color: var(--card-text-muted);
-  font-size: 0.7rem;
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+  color: var(--brand);
+  font-size: 0.58rem;
   font-weight: 600;
   line-height: 1;
   cursor: help;
@@ -1103,6 +1111,16 @@ th {
 
 .timeline-day--today .timeline-day-rule {
   background: linear-gradient(90deg, rgba(255, 122, 26, 0.26), rgba(255, 255, 255, 0.1));
+}
+
+.calendar-rest-state {
+  display: grid;
+  align-content: center;
+  min-height: 4.55rem;
+  padding: 0.82rem 0.82rem 0.82rem 1.64rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .rest-note {
@@ -1382,7 +1400,6 @@ th {
   }
 
   .section-heading--split,
-  .calendar-week-marker,
   .calendar-header,
   .dialog-header,
   .calendar-day-header,
@@ -1394,7 +1411,8 @@ th {
   }
 
   .calendar-week-marker {
-    align-items: start;
+    display: flex;
+    align-items: center;
   }
 
   .timeline-day-flags {
