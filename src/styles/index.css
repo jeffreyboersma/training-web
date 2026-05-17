@@ -1101,6 +1101,26 @@ th {
   overflow: clip;
 }
 
+.calendar-today-jump {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 11;
+  padding: 0.3rem 0.72rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--bg-elevated);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.24);
+}
+
+.calendar-today-jump:hover {
+  background: var(--brand-deep);
+}
+
 .calendar-summary-strip,
 .calendar-day-list {
   display: grid;
@@ -1634,4 +1654,5 @@ th {
   .floating-navbar__mobile-footer .user-menu-panel {
     width: 100%;
   }
+
 }

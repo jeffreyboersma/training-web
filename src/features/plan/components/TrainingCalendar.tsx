@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   getSessionAccent,
@@ -57,6 +57,8 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
   const todayIso = getTodayIso();
   const dayRefs = useRef<Record<string, HTMLElement | null>>({});
   const hasAutoScrolledRef = useRef(false);
+  const [todayButtonTop, setTodayButtonTop] = useState<number | null>(null);
+  const [showGoToToday, setShowGoToToday] = useState(false);
 
   const calendarDays = useMemo<CalendarDayItem[]>(
     () =>
@@ -80,6 +82,25 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
   const anchorEntry = calendarDays.find((entry) => entry.isAnchorWeekStart) ?? firstDay;
   const scrollTargetDate = todayEntry?.day.date ?? anchorEntry?.day.date ?? null;
 
+  function getNavbarBottomOffset() {
+    const navbar = document.querySelector<HTMLElement>('.floating-navbar');
+    return navbar?.getBoundingClientRect().bottom ?? 0;
+  }
+
+  function scrollToCalendarDate(targetDate: string, behavior: ScrollBehavior) {
+    const target = dayRefs.current[targetDate];
+
+    if (!target) {
+      return;
+    }
+
+    const navbarBottom = getNavbarBottomOffset();
+    const targetTop = target.getBoundingClientRect().top + window.scrollY;
+    const scrollTop = Math.max(0, targetTop - navbarBottom - 12);
+
+    window.scrollTo({ top: scrollTop, behavior });
+  }
+
   useEffect(() => {
     if (!scrollTargetDate || hasAutoScrolledRef.current) {
       return undefined;
@@ -92,21 +113,79 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         return;
       }
 
-      const navbar = document.querySelector<HTMLElement>('.floating-navbar');
-      const navbarHeight = navbar?.getBoundingClientRect().height ?? 0;
-      const navbarTop = navbar ? Number.parseFloat(window.getComputedStyle(navbar).top) || 0 : 0;
-      const targetTop = target.getBoundingClientRect().top + window.scrollY;
-      const scrollTop = Math.max(0, targetTop - navbarHeight - navbarTop - 12);
-
       hasAutoScrolledRef.current = true;
-      window.scrollTo({ top: scrollTop, behavior: 'auto' });
+      scrollToCalendarDate(scrollTargetDate, 'auto');
     });
 
     return () => window.cancelAnimationFrame(frame);
   }, [scrollTargetDate]);
 
+  useEffect(() => {
+    if (!todayEntry) {
+      setShowGoToToday(false);
+      setTodayButtonTop(null);
+      return undefined;
+    }
+
+    const todayDate = todayEntry.day.date;
+
+    let frameId: number | null = null;
+
+    function updateTodayButtonState() {
+      frameId = null;
+
+      const target = dayRefs.current[todayDate];
+
+      if (!target) {
+        setShowGoToToday(false);
+        return;
+      }
+
+      const navbarBottom = getNavbarBottomOffset();
+      const targetTop = target.getBoundingClientRect().top;
+      const minimumVisibleTop = navbarBottom + 8;
+      const maximumVisibleTop = window.innerHeight - 32;
+      const isVisible = targetTop >= minimumVisibleTop && targetTop <= maximumVisibleTop;
+
+      setTodayButtonTop(Math.round(navbarBottom + 10));
+      setShowGoToToday(!isVisible);
+    }
+
+    function scheduleTodayButtonUpdate() {
+      if (frameId !== null) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(updateTodayButtonState);
+    }
+
+    updateTodayButtonState();
+    window.addEventListener('scroll', scheduleTodayButtonUpdate, { passive: true });
+    window.addEventListener('resize', scheduleTodayButtonUpdate);
+
+    return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener('scroll', scheduleTodayButtonUpdate);
+      window.removeEventListener('resize', scheduleTodayButtonUpdate);
+    };
+  }, [todayEntry]);
+
   return (
     <section className="panel-card calendar-shell" id="calendar-panel" role="tabpanel" aria-labelledby="view-tab-calendar">
+      {todayEntry && showGoToToday && todayButtonTop !== null ? (
+        <button
+          className="calendar-today-jump"
+          type="button"
+          style={{ top: `${todayButtonTop}px` }}
+          onClick={() => scrollToCalendarDate(todayEntry.day.date, 'smooth')}
+        >
+          GO TO TODAY
+        </button>
+      ) : null}
+
       <div className="section-heading">
         <div>
           <p className="eyebrow">Calendar</p>
