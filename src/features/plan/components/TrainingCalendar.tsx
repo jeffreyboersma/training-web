@@ -106,13 +106,11 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         <div>
           <p className="eyebrow">Calendar</p>
           <h3>Full training calendar</h3>
+          
           <p className="muted-copy">Move through the full block in one continuous timeline and open any session for details.</p>
         </div>
 
-        <div className="calendar-summary-strip" aria-label="Calendar summary">
-          {firstDay ? <span className="session-chip session-chip--muted">Plan starts {formatFullDate(firstDay.day.date)}</span> : null}
-          {todayEntry ? <span className="session-chip timeline-flag timeline-flag--today">Today</span> : null}
-        </div>
+        
       </div>
 
       <div className="calendar-day-list">
@@ -148,14 +146,13 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                   <span className="timeline-day-date">{formatDividerDate(entry.day.date)}</span>
 
                   <div className="timeline-day-flags">
-                    {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
                     <span className="timeline-session-count">{entry.day.sessions.length ? `${entry.day.sessions.length} planned` : 'Rest day'}</span>
                   </div>
                 </div>
 
                 <span aria-hidden="true" className="timeline-day-rule" />
-                                    {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">TODAY</span> : null}
-
+                {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
+                {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">TODAY</span> : null}
               </div>
 
               {entry.day.sessions.length ? (
