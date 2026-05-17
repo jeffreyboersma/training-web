@@ -175,11 +175,13 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
 
   return (
     <section className="panel-card calendar-shell" id="calendar-panel" role="tabpanel" aria-labelledby="view-tab-calendar">
-      {todayEntry && showGoToToday && todayButtonTop !== null ? (
+      {todayEntry ? (
         <button
-          className="calendar-today-jump"
+          aria-hidden={!showGoToToday || todayButtonTop === null}
+          className={`calendar-today-jump${showGoToToday && todayButtonTop !== null ? ' calendar-today-jump--visible' : ''}`}
+          tabIndex={showGoToToday && todayButtonTop !== null ? 0 : -1}
           type="button"
-          style={{ top: `${todayButtonTop}px` }}
+          style={{ top: `${todayButtonTop ?? 0}px` }}
           onClick={() => scrollToCalendarDate(todayEntry.day.date, 'smooth')}
         >
           GO TO TODAY

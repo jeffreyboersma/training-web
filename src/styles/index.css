@@ -1104,7 +1104,7 @@ th {
 .calendar-today-jump {
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -0.35rem);
   z-index: 11;
   padding: 0.3rem 0.72rem;
   border: 0;
@@ -1115,6 +1115,18 @@ th {
   font-weight: 600;
   letter-spacing: 0.12em;
   box-shadow: 0 16px 28px rgba(0, 0, 0, 0.24);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+}
+
+.calendar-today-jump--visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 0s;
 }
 
 .calendar-today-jump:hover {

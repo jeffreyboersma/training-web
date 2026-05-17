@@ -217,6 +217,12 @@ export function PlanPage() {
       setSearchParams(nextParams, { replace: true });
     });
 
+    if (nextView === 'overview' && currentView !== 'overview') {
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      });
+    }
+
     closeMobileMenu();
   }
 
