@@ -937,90 +937,105 @@ th {
   grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
 }
 
-.calendar-stack {
+.calendar-shell {
+  overflow: clip;
+}
+
+.calendar-summary-strip,
+.calendar-day-list {
   display: grid;
-  gap: 1rem;
+  gap: 0.7rem;
 }
 
-.calendar-week {
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.018);
+.calendar-summary-strip {
+  grid-template-columns: repeat(auto-fit, minmax(11rem, max-content));
+  margin-top: 0.2rem;
 }
 
-.calendar-week--collapsed {
-  background: rgba(255, 255, 255, 0.012);
-}
-
-.calendar-week--anchor {
-  border-color: rgba(255, 122, 26, 0.32);
-  box-shadow: inset 0 0 0 1px rgba(255, 122, 26, 0.08);
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+.calendar-week-marker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.9rem;
   align-items: start;
+  padding: 0.2rem 0 0.35rem 0.95rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.calendar-week-toggle {
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
+.calendar-week-marker--anchor {
+  border-left-color: rgba(255, 122, 26, 0.4);
 }
 
-.calendar-week-toggle:hover .calendar-toggle-caret,
-.calendar-week-toggle:focus-visible .calendar-toggle-caret {
-  color: var(--text-strong);
-}
-
-.calendar-week-content {
+.calendar-week-marker-copy,
+.calendar-week-marker-heading {
   display: grid;
-  gap: 1rem;
-  margin-top: 0.85rem;
+  gap: 0.22rem;
 }
 
-.calendar-toggle-caret {
-  width: 0.9rem;
-  height: 0.9rem;
-  flex: 0 0 auto;
-  position: relative;
-  color: var(--muted);
-  transition: color 0.16s ease;
+.calendar-week-marker-heading .muted-copy,
+.calendar-week-summary,
+.calendar-week-note {
+  margin: 0;
 }
 
-.calendar-toggle-caret::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  color: var(--muted);
-  transform: translate(-50%, -62%) rotate(45deg);
+.calendar-week-summary,
+.calendar-week-note,
+.timeline-session-count {
+  color: var(--card-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
-.calendar-toggle-caret--expanded::before {
-  transform: translate(-50%, -38%) rotate(-135deg);
-}
-
-.calendar-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.65rem;
+.calendar-week-note {
+  font-size: 0.8rem;
 }
 
 .calendar-day {
   min-height: 0;
-  gap: 0.55rem;
+  gap: 0.8rem;
   align-content: start;
+  scroll-margin-top: 1.25rem;
+}
+
+.timeline-day {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.timeline-day--start {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.036);
+}
+
+.timeline-day--today {
+  border-color: rgba(255, 122, 26, 0.36);
+  box-shadow: inset 0 0 0 1px rgba(255, 122, 26, 0.12);
+  background: linear-gradient(180deg, rgba(255, 122, 26, 0.08), rgba(255, 255, 255, 0.03));
+}
+
+.timeline-day-date {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.timeline-day-date p {
+  margin: 0;
+}
+
+.timeline-day-flags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.45rem;
+  align-items: start;
+}
+
+.timeline-flag {
+  border-color: transparent;
+}
+
+.timeline-flag--today {
+  border-color: rgba(255, 122, 26, 0.28);
+  background: rgba(255, 122, 26, 0.14);
+  color: #ffd1a4;
 }
 
 .rest-note {
@@ -1300,6 +1315,7 @@ th {
   }
 
   .section-heading--split,
+  .calendar-week-marker,
   .calendar-header,
   .dialog-header,
   .calendar-day-header,
@@ -1308,6 +1324,10 @@ th {
   .event-card-header,
   .toolbar-actions {
     display: grid;
+  }
+
+  .timeline-day-flags {
+    justify-content: start;
   }
 
   .toolbar-tabs {
