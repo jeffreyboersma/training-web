@@ -236,7 +236,7 @@ th {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 0.7rem;
   align-items: center;
-  padding: 0.35rem 0.7rem;
+  padding: 0.16rem 0.7rem;
   border-radius: 18px;
   background: rgba(16, 16, 18, 0.82);
   box-shadow: 0 24px 58px rgba(0, 0, 0, 0.3);
@@ -279,8 +279,8 @@ th {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.25rem;
-  padding: 0.45rem 0.85rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.78rem;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -307,8 +307,8 @@ th {
 .floating-navbar__menu-toggle,
 .floating-navbar__close-toggle {
   display: none;
-  width: 2.35rem;
-  height: 2.35rem;
+  width: 2.1rem;
+  height: 2.1rem;
   padding: 0;
   align-items: center;
   justify-content: center;
@@ -344,9 +344,9 @@ th {
 }
 
 .floating-navbar__user-menu .user-menu-trigger {
-  width: 2.35rem;
-  height: 2.35rem;
-  font-size: 0.82rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 0.76rem;
 }
 
 .floating-navbar__mobile-menu {
@@ -356,9 +356,7 @@ th {
   grid-template-rows: auto 1fr auto;
   gap: 1.5rem;
   padding: 1rem;
-  background:
-    radial-gradient(circle at top left, rgba(255, 122, 26, 0.14), transparent 32%),
-    rgba(8, 8, 9, 0.96);
+  background: var(--bg-panel);
   backdrop-filter: blur(18px);
   will-change: transform, opacity;
 }
@@ -384,6 +382,8 @@ th {
   display: grid;
   align-content: start;
   gap: 0.85rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .floating-nav-button--stacked {

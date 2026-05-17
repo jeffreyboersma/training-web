@@ -92,8 +92,14 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         return;
       }
 
+      const navbar = document.querySelector<HTMLElement>('.floating-navbar');
+      const navbarHeight = navbar?.getBoundingClientRect().height ?? 0;
+      const navbarTop = navbar ? Number.parseFloat(window.getComputedStyle(navbar).top) || 0 : 0;
+      const targetTop = target.getBoundingClientRect().top + window.scrollY;
+      const scrollTop = Math.max(0, targetTop - navbarHeight - navbarTop - 12);
+
       hasAutoScrolledRef.current = true;
-      target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+      window.scrollTo({ top: scrollTop, behavior: 'auto' });
     });
 
     return () => window.cancelAnimationFrame(frame);
