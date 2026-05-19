@@ -230,10 +230,6 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
               <div className="timeline-day-divider">
                 <div className="timeline-day-divider-copy">
                   <span className="timeline-day-date">{formatDividerDate(entry.day.date)}</span>
-
-                  <div className="timeline-day-flags">
-                    <span className="timeline-session-count">{entry.day.sessions.length ? `${entry.day.sessions.length} planned` : 'Rest day'}</span>
-                  </div>
                 </div>
 
                 <span aria-hidden="true" className="timeline-day-rule" />
