@@ -1170,10 +1170,6 @@ th {
   background: color-mix(in srgb, var(--muted) 55%, transparent);
 }
 
-.calendar-week-marker--anchor .calendar-week-marker-rule {
-  background: var(--brand);
-}
-
 .calendar-week-label {
   margin: 0;
   color: var(--muted);
