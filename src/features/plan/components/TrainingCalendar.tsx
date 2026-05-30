@@ -225,6 +225,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                 </div>
 
                 <span aria-hidden="true" className="calendar-week-marker-rule" />
+                {entry.week.recovery ? <span className="session-chip--recovery">RECOVERY</span> : null}
               </div>
             ) : null}
 
