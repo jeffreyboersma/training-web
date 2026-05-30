@@ -18,6 +18,7 @@ type TrainingCalendarProps = {
 type CalendarDayItem = {
   day: TrainingWeek['days'][number];
   isAnchorWeekStart: boolean;
+  isCurrentWeek: boolean;
   isPlanStart: boolean;
   isToday: boolean;
   isWeekPast: boolean;
@@ -68,9 +69,12 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
 
         const weekEndDate = weekDays[weekDays.length - 1]?.date ?? weekDays[0]?.date;
 
+        const isCurrentWeek = weekDays.some((d) => d.date === todayIso);
+
         return weekDays.map((day, index) => ({
           day,
           isAnchorWeekStart: index === 0 && week.week === anchorWeekNumber,
+          isCurrentWeek,
           isPlanStart: week.week === weeklyPlans[0]?.week && index === 0,
           isToday: day.date === todayIso,
           isWeekPast: weekEndDate !== undefined && weekEndDate < todayIso,
@@ -215,7 +219,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         {calendarDays.map((entry) => (
           <Fragment key={entry.day.date}>
             {entry.isWeekStart ? (
-              <div className={`calendar-week-marker${entry.isAnchorWeekStart ? ' calendar-week-marker--anchor' : ''}${entry.isWeekPast ? ' calendar-week-marker--past' : ''}`}>
+              <div className={`calendar-week-marker${entry.isAnchorWeekStart ? ' calendar-week-marker--anchor' : ''}${entry.isCurrentWeek ? ' calendar-week-marker--current' : ''}${entry.isWeekPast ? ' calendar-week-marker--past' : ''}`}>
                 <div className="calendar-week-marker-copy">
                   <p className="calendar-week-label">WEEK {entry.week.week} • {entry.week.phase}</p>
                   <span
