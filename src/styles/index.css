@@ -1155,6 +1155,10 @@ th {
   padding: 0.1rem 0 0.2rem;
 }
 
+.calendar-week-marker--past {
+  opacity: 0.45;
+}
+
 .calendar-week-marker-copy {
   display: flex;
   align-items: center;
@@ -1246,6 +1250,10 @@ th {
 
 .timeline-day--start {
   padding-top: 0.1rem;
+}
+
+.timeline-day--past {
+  opacity: 0.45;
 }
 
 .timeline-day--today {

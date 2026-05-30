@@ -20,6 +20,7 @@ type CalendarDayItem = {
   isAnchorWeekStart: boolean;
   isPlanStart: boolean;
   isToday: boolean;
+  isWeekPast: boolean;
   isWeekStart: boolean;
   week: TrainingWeek;
 };
@@ -65,11 +66,14 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
       weeklyPlans.flatMap((week) => {
         const weekDays = getWeekDaysMondayToSunday(week);
 
+        const weekEndDate = weekDays[weekDays.length - 1]?.date ?? weekDays[0]?.date;
+
         return weekDays.map((day, index) => ({
           day,
           isAnchorWeekStart: index === 0 && week.week === anchorWeekNumber,
           isPlanStart: week.week === weeklyPlans[0]?.week && index === 0,
           isToday: day.date === todayIso,
+          isWeekPast: weekEndDate !== undefined && weekEndDate < todayIso,
           isWeekStart: index === 0,
           week,
         }));
@@ -211,7 +215,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         {calendarDays.map((entry) => (
           <Fragment key={entry.day.date}>
             {entry.isWeekStart ? (
-              <div className={`calendar-week-marker${entry.isAnchorWeekStart ? ' calendar-week-marker--anchor' : ''}`}>
+              <div className={`calendar-week-marker${entry.isAnchorWeekStart ? ' calendar-week-marker--anchor' : ''}${entry.isWeekPast ? ' calendar-week-marker--past' : ''}`}>
                 <div className="calendar-week-marker-copy">
                   <p className="calendar-week-label">WEEK {entry.week.week} • {entry.week.phase}</p>
                   <span
@@ -231,7 +235,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
 
             <article
               aria-current={entry.isToday ? 'date' : undefined}
-              className={`timeline-day${entry.isPlanStart ? ' timeline-day--start' : ''}${entry.isToday ? ' timeline-day--today' : ''}`}
+              className={`timeline-day${entry.isPlanStart ? ' timeline-day--start' : ''}${entry.isToday ? ' timeline-day--today' : ''}${!entry.isToday && entry.day.date < todayIso ? ' timeline-day--past' : ''}`}
               ref={(node) => {
                 dayRefs.current[entry.day.date] = node;
               }}
