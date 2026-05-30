@@ -1121,7 +1121,7 @@ th {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+  transition: opacity 180ms ease, transform 180ms ease, top 300ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 180ms;
 }
 
 .calendar-today-jump--visible {
@@ -1129,7 +1129,7 @@ th {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 0s;
+  transition: opacity 180ms ease, transform 180ms ease, top 300ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
 }
 
 .calendar-today-jump:hover {
@@ -1655,6 +1655,11 @@ th {
 @media (max-width: 1200px) {
   .floating-navbar {
     top: 0.75rem;
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .floating-navbar[data-hidden='true'] {
+    transform: translateY(calc(-100% - 1.5rem));
   }
 
   .floating-navbar__bar {

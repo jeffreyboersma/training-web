@@ -20,8 +20,11 @@ export function PlanPage() {
   const [selection, setSelection] = useState<SessionSelection | null>(null);
   const [mobileMenuState, setMobileMenuState] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
   const desktopUserMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollYRef = useRef(0);
+  const navbarHiddenRef = useRef(false);
   const currentView = searchParams.get('view') === 'calendar' ? 'calendar' : 'overview';
   const nextEvent = useMemo(() => (data ? findNextEvent(data.plan.events) : null), [data]);
   const anchorWeek = useMemo(() => (data ? findAnchorWeek(data.weeklyPlans) : null), [data]);
@@ -35,6 +38,54 @@ export function PlanPage() {
     { key: 'overview' as const, label: 'Overview' },
     { key: 'calendar' as const, label: 'Calendar' },
   ];
+
+  useEffect(() => {
+    const SCROLL_HIDE_BREAKPOINT = 1200;
+    const SCROLL_THRESHOLD = 6;
+    const SCROLL_TOP_TOLERANCE = 60;
+
+    function handleScroll() {
+      if (window.innerWidth > SCROLL_HIDE_BREAKPOINT) {
+        return;
+      }
+
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollYRef.current;
+      lastScrollYRef.current = currentY;
+
+      if (currentY < SCROLL_TOP_TOLERANCE) {
+        if (navbarHiddenRef.current) {
+          navbarHiddenRef.current = false;
+          setNavbarHidden(false);
+        }
+
+        return;
+      }
+
+      if (delta > SCROLL_THRESHOLD && !navbarHiddenRef.current) {
+        navbarHiddenRef.current = true;
+        setNavbarHidden(true);
+      } else if (delta < -SCROLL_THRESHOLD && navbarHiddenRef.current) {
+        navbarHiddenRef.current = false;
+        setNavbarHidden(false);
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (mobileMenuState === 'closed') {
+      return;
+    }
+
+    navbarHiddenRef.current = false;
+    setNavbarHidden(false);
+  }, [mobileMenuState]);
 
   useEffect(() => {
     if (!userMenuOpen) {
@@ -277,7 +328,7 @@ export function PlanPage() {
 
   return (
     <main className="page-shell plan-shell">
-      <div className="floating-navbar" data-mobile-menu-open={mobileMenuExpanded ? 'true' : 'false'}>
+      <div className="floating-navbar" data-mobile-menu-open={mobileMenuExpanded ? 'true' : 'false'} data-hidden={navbarHidden ? 'true' : undefined}>
         <section className="floating-navbar__bar" aria-label="Primary navigation">
           <div className="page-brand floating-navbar__brand">
             <span className="brand-mark brand-mark--compact" aria-hidden="true" />

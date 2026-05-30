@@ -84,7 +84,10 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
 
   function getNavbarBottomOffset() {
     const navbar = document.querySelector<HTMLElement>('.floating-navbar');
-    return navbar?.getBoundingClientRect().bottom ?? 0;
+    if (!navbar) return 0;
+    if (navbar.dataset.hidden === 'true') return 0;
+    const stickyTop = parseFloat(getComputedStyle(navbar).top) || 0;
+    return stickyTop + navbar.offsetHeight;
   }
 
   function scrollToCalendarDate(targetDate: string, behavior: ScrollBehavior) {
@@ -159,6 +162,10 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
       frameId = window.requestAnimationFrame(updateTodayButtonState);
     }
 
+    const navbar = document.querySelector<HTMLElement>('.floating-navbar');
+    const navbarObserver = navbar ? new MutationObserver(updateTodayButtonState) : null;
+    if (navbar) navbarObserver?.observe(navbar, { attributes: true, attributeFilter: ['data-hidden'] });
+
     updateTodayButtonState();
     window.addEventListener('scroll', scheduleTodayButtonUpdate, { passive: true });
     window.addEventListener('resize', scheduleTodayButtonUpdate);
@@ -168,6 +175,7 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         window.cancelAnimationFrame(frameId);
       }
 
+      navbarObserver?.disconnect();
       window.removeEventListener('scroll', scheduleTodayButtonUpdate);
       window.removeEventListener('resize', scheduleTodayButtonUpdate);
     };
