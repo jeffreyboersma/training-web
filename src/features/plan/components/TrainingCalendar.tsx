@@ -105,7 +105,12 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
       return;
     }
 
-    const navbarBottom = getNavbarBottomOffset();
+    // Always account for the navbar height even if currently hidden,
+    // because scrolling up will cause it to reappear and cover the target.
+    const navbar = document.querySelector<HTMLElement>('.floating-navbar');
+    const navbarBottom = navbar
+      ? (parseFloat(getComputedStyle(navbar).top) || 0) + navbar.offsetHeight
+      : 0;
     const targetTop = target.getBoundingClientRect().top + window.scrollY;
     const scrollTop = Math.max(0, targetTop - navbarBottom - 12);
 
