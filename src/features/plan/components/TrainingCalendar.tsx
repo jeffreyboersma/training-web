@@ -209,17 +209,6 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
         </button>
       ) : null}
 
-      <div className="section-heading">
-        <div>
-          <p className="eyebrow">Calendar</p>
-          <h3>Full training calendar</h3>
-          
-          <p className="muted-copy">Move through the full block in one continuous timeline and open any session for details.</p>
-        </div>
-
-        
-      </div>
-
       <div className="calendar-day-list">
         {calendarDays.map((entry) => (
           <Fragment key={entry.day.date}>

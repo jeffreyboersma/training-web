@@ -173,7 +173,6 @@ th {
 
 .plan-shell {
   position: relative;
-  padding-top: 0.45rem;
 }
 
 .page-brand,
@@ -1624,6 +1623,10 @@ th {
     padding: 0.75rem 0 2rem;
   }
 
+  .floating-navbar {
+    top: 0.75rem;
+  }
+
   .site-brand {
     align-items: start;
   }
@@ -1676,7 +1679,7 @@ th {
 
 @media (max-width: 1200px) {
   .floating-navbar {
-    top: 0.75rem;
+    top: 1rem;
     transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
