@@ -227,7 +227,8 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                 </div>
 
                 <span aria-hidden="true" className="calendar-week-marker-rule" />
-                {entry.week.recovery ? <span className="session-chip--recovery">RECOVERY</span> : null}
+                {entry.isPlanStart ? <span className="week-marker-chip week-marker-chip--muted">Plan starts</span> : null}
+                {entry.week.recovery ? <span className="week-marker-chip week-marker-chip--recovery">Recovery</span> : null}
               </div>
             ) : null}
 
@@ -244,7 +245,6 @@ export function TrainingCalendar({ anchorWeekNumber, onSelectSession, weeklyPlan
                 </div>
 
                 <span aria-hidden="true" className="timeline-day-rule" />
-                {entry.isPlanStart ? <span className="session-chip session-chip--muted">Plan starts</span> : null}
                 {entry.isToday ? <span className="session-chip timeline-flag timeline-flag--today">TODAY</span> : null}
               </div>
 
